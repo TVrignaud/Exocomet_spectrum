@@ -16,12 +16,12 @@ This notebook provides interactive visualisations of Beta Pictoris spectra obtai
 
 Both observations reveal absorption signatures from transiting exocomet gaseous tails, detected in lines of metallic ions (Fe II, Ni II, ...) and volatile tracers (C I). This notebook is designed to help explore and visualise these signatures interactively.
 
-We also provide detailed views of the transmission model fitted to each observational dataset. The physical description of this model is presented in:
+We also provide detailed views of the exocomet model used to fit each observational dataset. The physical description of this model is presented in:
 
 - Vrignaud & Lecavelier 2026 (A&A, 707, A60), focused on the transit distance of the exocomets;
 - Vrignaud et al. (in prep., 2026), focused on the C/Fe ratio.
 
-The python codes used to compute this model and plot the data can be retrieved at https://github.com/TVrignaud/Exocomet_spectrum.
+The python codes used to plot the data and compute the transmission model can be retrieved at https://github.com/TVrignaud/Exocomet_spectrum.
 
 
 ```{python}
@@ -534,7 +534,7 @@ Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_0
 
 Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_04_29, n_comp, 
                        plot_model_HR = True, plot_model_LR = False, 
-                       line = 1560.308, xlim = [-150,150], ylim = [0,2e-12])
+                       line = 1560.308, xlim = [-150,150], ylim = [0,2e-12], plot_error_bar = True)
 ```
 
 ***

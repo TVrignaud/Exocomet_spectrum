@@ -600,14 +600,6 @@ def Retrieve_LSF(Analysis_dic, settings) :
                     kernel = 1.193 * np.exp(-0.5 * (rv_HR - 0.00564)**2/1.135**2) - 0.194 * np.exp(-0.5 * (rv_HR + 0.00901)**2/0.680**2)
                     kernel /= np.sum(kernel)
 
-                    if 'adjust_LSF_HARPS' in settings : 
-                        b_gauss_wings = settings['adjust_LSF_HARPS']['b_gauss_wings']
-                        weight_wings = settings['adjust_LSF_HARPS']['weight_wings']
-                        kernel_wings = np.exp(-rv_HR**2/b_gauss_wings**2)
-                        kernel_wings *= weight_wings/np.sum(kernel_wings)
-                        kernel += kernel_wings
-                        kernel /= np.sum(kernel)
-
                     Analysis_dic['LSF'][inst][date][spec] = {'kernel' : kernel, 'mode' : 'rv'}
 
     return None
