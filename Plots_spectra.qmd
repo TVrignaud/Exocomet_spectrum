@@ -1,0 +1,645 @@
+---
+title: Retrieve observations
+format:
+  html:
+    code-fold: true
+jupyter: env_spectral_analysis
+---
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+import copy
+
+import Routines
+
+%matplotlib widget
+plt.ion()
+```
+
+```{python}
+import importlib.util
+import sys
+
+def import_module(mod_path):
+    spec = importlib.util.spec_from_file_location('imported_modules', mod_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules['imported_modules'] = module
+    spec.loader.exec_module(module)    
+    return module    
+
+Routines = import_module('Routines.py')
+```
+
+
+Observations of Beta Pic are stored in Data_Beta_Pic.npy
+
+The dictionnary is organised as follows: 
+
+- spec_dic['spec_renorm'] contains the observed spectra, which are organised by instrument/date of observation/spectrum/order.
+- spec_dic['reference'] contains estimates of the stellar continuum without absorption from exocomets. 
+
+
+```{python}
+spec_dic = np.load('Data_Beta_Pic.npy', allow_pickle = True).item()
+
+
+list_visits_STIS =  [
+                    '1997-12-06',  '1997-12-19',  
+                    #  '2001-08-26',  '2001-08-27',  '2002-05-21',  '2002-05-22',  
+                     '2017-10-09',  '2018-01-10',  '2018-03-07',  '2018-10-29',  '2018-12-15',  
+                    #  '2024-04-17',  '2024-07-31',  '2024-08-08',  
+                     '2025-04-29',  '2025-09-03',  '2025-09-10',  '2025-10-13'
+                     ]  
+
+
+list_visits_COS  =  ['2014-02-22',  '2015-12-10',  '2016-01-30',  '2017-04-23', 
+                     '2017-06-10',  '2017-08-04',  '2017-10-20',  '2017-11-26', 
+                     '2018-03-17',  '2018-05-09',  '2018-10-29',  '2018-12-15', 
+                     '2025-04-29',  '2025-09-03',  '2025-09-10',  '2025-10-13']
+
+
+list_visits_HARPS = ['2024-04-17', '2024-08-08', '2025-04-29', '2025-09-03', '2025-09-10']
+```
+
+# Overview of $\beta\, \text{Pic}$ spectra
+
+
+Both spectra (2025-04-29 and 2025-09-10) are compared with spectra taken at other epochs (from 1997 to 2025), for STIS, COS and HARPS. 
+
+For STIS and HARPS, we also provide estimates of the stellar photospheric continuum, free of any circumstellar absorption. These estimates were obtained by combining all existing Beta Pic spectra from these instruments.
+
+```{python}
+# Attribute color to each spectrum
+
+colors = ['royalblue', 'firebrick', 'darkorange', 'seagreen', 'darkviolet', 'goldenrod', 'deeppink', 'teal', 'saddlebrown', 'mediumslateblue']
+date_to_color = {}
+for i, date in enumerate(sorted(set(list_visits_STIS) | set(list_visits_COS) | set(list_visits_HARPS))) : date_to_color[date] = colors[i%len(colors)]
+```
+
+### STIS
+
+```{python}
+# STIS spectra from 1997 to 2025
+inst = 'STIS'
+visits_plots = list_visits_STIS
+visits_emphasis = ['2025-04-29', '2025-09-10']
+plot_error_bar = False
+
+fig = Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, 
+                                      plot_reference = 'Photospheric continuum', 
+                                      visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = 'Beta Pic (HST/STIS)', 
+                                      loc_label = 'upper right')
+```
+
+### COS
+
+```{python}
+# COS spectra from 2014 to 2025
+inst = 'STIS'
+inst = 'COS'
+visits_plots = list_visits_COS
+visits_emphasis = ['2025-04-29', '2025-09-10']
+plot_error_bar = False
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = None, visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = 'Beta Pic (HST/COS)')
+```
+
+### HARPS
+
+```{python}
+# HARPS spectra from 2024 - 2025
+inst = 'HARPS'
+visits_plots = list_visits_HARPS
+visits_emphasis = ['2025-04-29', '2025-09-10']
+plot_error_bar = False
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, 
+                                plot_reference = 'Photospheric continuum', visits_emphasis = visits_emphasis, 
+                                date_to_color = date_to_color, xlim = [3900,4000], title = 'Beta Pic (HST/HARPS)')
+```
+
+# Zoom on individual lines
+
+```{python}
+# Fe II line at 2629 A
+inst = 'STIS'
+visits_plots = list_visits_STIS
+visits_emphasis = ['2025-04-29', '2025-09-10']
+plot_error_bar = False
+line = 2629.0766 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Photospheric continuum', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
+                    line = line, xlim = [-150,150], loc_label = 'lower right', title = 'Fe II - 2629 Å (HST/STIS)')
+```
+
+```{python}
+# C I line at 1560.3 A
+inst = 'STIS'
+visits_plots = list_visits_STIS
+visits_emphasis = ['2025-04-29', '2025-09-10']
+plot_error_bar = False
+line = 1560.31 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Photospheric continuum', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
+                    line = line, xlim = [-150,150], title = 'C I - 1560 Å (HST/STIS)')
+```
+
+```{python}
+# Ca II K line at 3933.66 A
+inst = 'HARPS'
+visits_plots = list_visits_HARPS
+visits_emphasis = ['2025-04-29', '2025-09-10']
+plot_error_bar = False
+line = 3933.661 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Photospheric continuum', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
+                    line = line, xlim = [-150,150], title = 'Ca II - 3933 Å (HARPS)', loc_label = 'lower right')
+```
+
+# Extracting exocomet spectra
+
+For each epoch, a specific reference spectrum was built to isolate the absorption signatures of low-velocity comets
+
+- For STIS, the reference spectrum covers the whole 1500-2900 A range
+- For COS, the reference spectrum targets only specific lines of C I, Ni II, S I and Si II. Other species are either strongly saturated or affected by geocoronal emission
+- For HARPS, the reference spectrum covers the Ca II doublet only
+
+### 2025-04-29
+
+```{python}
+# View of the STIS spectrum taken on 2025-04-29
+inst = 'STIS'
+visits_plots = ['2025-04-29']
+visits_emphasis = ['2025-04-29']
+plot_error_bar = False
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-04-29 STIS', 
+                                visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = '2025-04-29 (HST/STIS)')
+```
+
+```{python}
+# View of the COS spectrum taken on 2025-04-29
+inst = 'COS'
+visits_plots = ['2025-04-29']
+visits_emphasis = ['2025-04-29']
+plot_error_bar = False
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-04-29 COS', visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = '2025-04-29 (HST/COS)')
+```
+
+```{python}
+# View of the HARPS spectrum taken on 2025-04-29
+inst = 'HARPS'
+visits_plots = ['2025-04-29']
+visits_emphasis = ['2025-04-29']
+plot_error_bar = False
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, 
+                                plot_reference = 'Continuum 2025-04-29 HARPS', visits_emphasis = visits_emphasis, 
+                                date_to_color = date_to_color, title = '2025-04-29 (HARPS)',
+                                xlim = [3900,4000])
+```
+
+```{python}
+# Zoomed-in view of the 2025-04-29 spectrum around the Fe II line at 2629 A (STIS)
+inst = 'STIS'
+visits_plots = ['2025-04-29']
+visits_emphasis = ['2025-04-29']
+plot_error_bar = False
+line = 2629.0766 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-04-29 STIS', visits_emphasis = visits_emphasis, 
+                    line = line, xlim = [-150,150], date_to_color = date_to_color, title = 'Fe II - 2629 Å (HST/STIS)')
+```
+
+```{python}
+# Zoomed-in view of the 2025-04-29 spectrum around the C I line at 1560.3 A (STIS)
+inst = 'STIS'
+visits_plots = ['2025-04-29']
+visits_emphasis = ['2025-04-29']
+plot_error_bar = False
+line = 1560.31 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-04-29 STIS', visits_emphasis = visits_emphasis, 
+                    line = line, xlim = [-150,150], date_to_color = date_to_color, title = 'C I - 1560 Å (HST/STIS)')
+```
+
+### 2025-09-10
+
+```{python}
+# View of the STIS spectrum taken on 2025-09-10
+inst = 'STIS'
+visits_plots = ['2025-09-10']
+visits_emphasis = ['2025-09-10']
+plot_error_bar = False
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-09-10 STIS', 
+                                visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = '2025-09-10 (HST/STIS)')
+
+
+```
+
+```{python}
+# View of the COS spectrum taken on 2025-09-10
+inst = 'COS'
+visits_plots = ['2025-09-10']
+visits_emphasis = ['2025-09-10']
+plot_error_bar = False
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-09-10 COS', visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = '2025-09-10 (COS)')
+```
+
+```{python}
+# View of the HARPS spectrum taken on 2025-09-10
+inst = 'HARPS'
+visits_plots = ['2025-09-10']
+visits_emphasis = ['2025-09-10']
+plot_error_bar = False
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-09-10 HARPS', 
+                                visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = '2025-09-10 (HARPS)',
+                                xlim = [3900,4000])
+```
+
+```{python}
+# Zoomed-in view of the 2025-09-10 spectrum around the Fe II line at 2629 A (STIS)
+inst = 'STIS'
+visits_plots = ['2025-09-10']
+visits_emphasis = ['2025-09-10']
+plot_error_bar = False
+line = 2629.0766 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-09-10 STIS', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
+                    line = line, xlim = [-150,150], title = 'Fe II - 2629 Å (HST/STIS)')
+```
+
+```{python}
+# Zoomed-in view of the 2025-09-10 spectrum around the C I line at 1560.3 A (STIS)
+inst = 'STIS'
+visits_plots = ['2025-09-10']
+visits_emphasis = ['2025-09-10']
+plot_error_bar = False
+line = 1560.31 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+
+Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-09-10 STIS', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
+                    line = line, xlim = [-150,150], title = 'C I - 1560 Å (HST/STIS)')
+```
+
+# Overplot of the fitted model
+
+For each date of observations, we compare the observed spectrum (HST/HARPS) with our best fit model. 
+
+In each case, the model features several (2-3) transiting exocomets at distinct radial velocities, as well as the curcumstellar gaseous disc. 
+
+The reduced chi2 have been brought to ~ 1 by increasing the error bars on the pixel flux depending on the absorption depth, to account for systematic uncertainties introduced by the simplicity of the model
+
+### 2025-04-29
+
+```{python}
+# Prepare the analysis:
+#   + Recover the observed data
+#   + Identify the fitted lines
+#   + Retrieve datasets of spectroscopic data for the studied species, to calculate their excitation states
+#   + Retrieve instrumental properties (LSF)
+
+import Settings_2025_04_29_refrac_carbon as Settings
+
+Analysis_dic_2025_04_29 = Routines.Prepare_analysis(Settings.settings)
+```
+
+```{python}
+# Best-fit model parameters
+
+dic_params_all_components = {
+
+    # First component: exocomet at -7 km/s (LVC 1)
+    0: {'d': 0.892,              # Transit distance (in AU, relative to Beta Pic)
+        'Delta_d': 0.0,          # Width of the cloud, in AU (in AU, here set to 0)
+        'f_esc': 0.175,          # Ratio between the transverse and radial column density of the cloud (between 0 and 1)
+        'xi': 0.0,               # Turbulent velocity dispersion of the cloud (in km/s, here set to 0)
+        'T_i': 7081.0,           # Ionic temperature (in K)
+        'log_n_e': 4.32,         # Logarithm of electronic density (in cm-3)
+        'log_T_e': 4.396,        # Logarithm of electronic temperature (in K)
+        'v': [-13.57, -11.57, -9.57, -7.436, -5.57, -3.57, -1.57],            # Velocities at from which the component profiles are interpolated (in km/s, fixed during the fit)
+        'alpha': [0.956, 0.956, 0.956, 0.956, 0.956, 0.956, 0.956],           # Covering factor profile (here we fit for only one covering factor, assued to be the same for all RV)
+        'phi_macro': [0.029, 0.117, 0.444, 1.0, 0.488, 0.0885, 0.044],        # Line profile of the component (max = 1)
+          'N': {'Fe II': 3.422,        # Column densities of the studied species (7 refractory species + C I and 13C I)
+                'Ni II': 0.239, 
+                'Ca II': 0.0172, 
+                'Cr II': 0.0263, 
+                'Mn II': 0.0175, 
+                'Si II': 4.857, 
+                'S I': 0.0275, 
+                'C I 3P 1/2': 0.475,       # Four lowest states of 12C I 
+                'C I 3P 3/2': 1.425, 
+                'C I 3P 5/2': 2.375, 
+                'C I 1D 5/2': 0.256, 
+                '13C I 3P 1/2': 0.0317,    # 13C is assumed to be 1/15 of 12C
+                '13C I 3P 3/2': 0.095, 
+                '13C I 3P 5/2': 0.158, 
+                '13C I 1D 5/2': 0.0171}}, 
+
+    # Second component: exocomet at +2 km/s (LVC 2)
+    1: {'d': 4.756, 
+        'Delta_d': 0.0, 
+        'f_esc': 0.0959, 
+        'xi': 0.0, 
+        'T_i': 2081.0, 
+        'log_n_e': 3.438, 
+        'log_T_e': 2.993, 
+        'v': [-3.45, -1.45, 0.55, 2.47, 4.55, 6.55, 8.55], 
+        'alpha': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 
+        'phi_macro': [0.0174, 0.0853, 0.694, 1.0, 0.634, 0.105, 0.00935], 
+        'N': {'Fe II': 6.258, 
+              'Ni II': 0.315, 
+              'Ca II': 0.0721, 
+              'Cr II': 0.0723, 
+              'Mn II': 0.0311, 
+              'Si II': 4.949, 
+              'S I': 0.131, 
+              'C I 3P 1/2': 1.268, 
+              'C I 3P 3/2': 0.933, 
+              'C I 3P 5/2': 1.05, 
+              'C I 1D 5/2': 0.102, 
+              '13C I 3P 1/2': 0.0845, 
+              '13C I 3P 3/2': 0.0622, 
+              '13C I 3P 5/2': 0.07, 
+              '13C I 1D 5/2': 0.0068}}, 
+
+    # Third component: exocomet at +10 km/s (LVC 3)
+    2: {'d': 1.72, 
+        'Delta_d': 0.0, 
+        'f_esc': 0.0516, 
+        'xi': 0.0, 
+        'T_i': 1846.0, 
+        'log_n_e': 3.083, 
+        'log_T_e': 3.923, 
+        'v': [4.7, 6.4, 8.036, 9.72, 11.2, 13.2, 14.9, 16.6, 18.3], 
+        'alpha': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 
+        'phi_macro': [0.0274, 0.0463, 0.219, 1.0, 0.243, 0.185, 0.0368, 0.023, 0.0135], 
+        'N': {'Fe II': 1.52,
+              'Ni II': 0.102, 
+              'Ca II': 0.00951, 
+              'Cr II': 0.0186, 
+              'Mn II': 0.00807, 
+              'Si II': 2.175, 
+              'S I': 0.0161, 
+              'C I 3P 1/2': 0.33, 
+              'C I 3P 3/2': 0.94, 
+              'C I 3P 5/2': 1.12, 
+              'C I 1D 5/2': 0.0594, 
+              '13C I 3P 1/2': 0.022, 
+              '13C I 3P 3/2': 0.063, 
+              '13C I 3P 5/2': 0.075, 
+              '13C I 1D 5/2': 0.00396}}, 
+
+    # Fourth component: circumstellar disc at 0 km/s
+    3: {'d': 76.16, 
+        'Delta_d': 0.0, 
+        'f_esc': 0.3, 
+        'xi': 1.032, 
+        'T_i': 0.0, 
+        'log_n_e': 2.184, 
+        'log_T_e': 3.073, 
+        'v': [0.0], 
+        'alpha': [1.0], 
+        'phi_macro': [1.0], 
+        'N': {'Fe II': 2.0, 
+              'Ni II': 0.155, 
+              'Ca II': 0.216, 
+              'Cr II': 0.0396, 
+              'Mn II': 0.0119, 
+              'Si II': 1.798, 
+              'S I': 0.102, 
+              'C I 3P 1/2': 45.64, 
+              'C I 3P 3/2': 63.93, 
+              'C I 3P 5/2': 30.43, 
+              'C I 1D 5/2': 0.0, 
+              '13C I 3P 1/2': 3.043, 
+              '13C I 3P 3/2': 4.262, 
+              '13C I 3P 5/2': 2.029, 
+              '13C I 1D 5/2': 0.0}}}
+
+
+
+# Meta parameters for each component:
+#    + 'n_pix' : number of pixels used to compute the alpha and line profiles
+#    + 'd_N_bin' : width (in 10^14 cm-2) of the gas bins used to discretize each component, in order to take their self absorption in the computation of their excitation states. 
+#    + 'sp_ref' : reference species for d_N_bin
+#    + 'geometry' : either 'cylind' or 'slab', involved in the computation of the escape probability
+meta_params = {0: {'n_pix': 7, 'd_N_bin': 0.3, 'sp_ref': 'Fe II', 'geometry': 'cylind'}, 
+               1: {'n_pix': 7, 'd_N_bin': 0.3, 'sp_ref': 'Fe II', 'geometry': 'cylind'}, 
+               2: {'n_pix': 9, 'd_N_bin': 0.3, 'sp_ref': 'Fe II', 'geometry': 'cylind'}, 
+               3: {'n_pix': 1, 'd_N_bin': 0.3, 'sp_ref': 'Fe II', 'geometry': 'slab'}}
+
+
+# Number of components
+n_comp = 4
+
+# Convert dictionnary of parameters into a list (easier for MCMC fitting)
+list_params_all_components = Routines.dic_to_list(dic_params_all_components, meta_params, Analysis_dic_2025_04_29['List_species'])
+```
+
+```{python}
+# Compute the model and chi2
+dic_params_all_components, line_profiles_all_components, abundances_all_components = Routines.calc_abundances(Analysis_dic_2025_04_29, list_params_all_components, meta_params, n_comp)
+transmitted_flux_all_components = Routines.calc_full_profile(Analysis_dic_2025_04_29, abundances_all_components, dic_params_all_components, line_profiles_all_components)
+dic_flux_all_orders_2025_04_29 = Routines.resample_model_orders(Analysis_dic_2025_04_29, transmitted_flux_all_components, n_comp, resample_components = True)
+chi2,dof = Routines.calc_chi2(dic_flux_all_orders_2025_04_29)
+
+print('Chi2 :', chi2)
+print('Reduced Chi2 :', chi2/Analysis_dic_2025_04_29['dof'])
+```
+
+```{python}
+# Plot full spectrum (STIS + COS + HARPS)
+Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_04_29, n_comp, 
+                             plot_model_HR = True, plot_model_LR = False, plot_error_bar = False)
+```
+
+```{python}
+# View of the Fe II line at 2629 A
+Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_04_29, n_comp, 
+                       plot_model_HR = True, plot_model_LR = False, 
+                       line = 2629.0766, xlim = [-150,150], plot_error_bar = True)
+```
+
+```{python}
+# View of the C I line at 1560.3 A
+
+Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_04_29, n_comp, 
+                       plot_model_HR = True, plot_model_LR = False, 
+                       line = 1560.308, xlim = [-150,150], ylim = [0,2e-12])
+```
+
+### 2025-09-10
+
+```{python}
+# Prepare the analysis
+import Settings_2025_09_10_refrac_carbon as Settings
+
+Analysis_dic_2025_09_10 = Routines.Prepare_analysis(Settings.settings)
+```
+
+```{python}
+# Best fit model parameters
+
+dic_params_all_components = {
+
+    # First component: exocomet at +4 km/s (LVC 4)
+    0: {'d': 0.54, 
+        'Delta_d': 0.0, 
+        'f_esc': 0.182, 
+        'xi': 0.0, 
+        'T_i': 0.0, 
+        'log_n_e': 5.0, 
+        'log_T_e': 4.464, 
+        'v': [-20.0, -17.0, -14.0, -11.0, -8.0, -5.0, -2.0, 1.0, 7.0, 10.0, 13.0, 16.0, 19.0, 22.0, 25.0, 28.0, 31.0, 34.0, 37.0], 
+        'alpha': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.973, 0.957, 0.933, 0.915, 0.801, 0.796, 0.85, 0.612, 0.615, 0.241], 
+        'phi_macro': [0.000101, 0.0002, 0.00566, 0.00941, 0.025, 0.0575, 0.129, 0.169, 0.412, 0.59, 1.0, 0.542, 0.217, 0.128, 0.0501, 0.0166, 0.00578, 0.00373, 0.000938], 
+        'N': {'Fe II': 11.04, 
+              'Ni II': 0.898, 
+              'Ca II': 0.0749, 
+              'Cr II': 0.108, 
+              'Mn II': 0.06, 
+              'Si II': 13.89, 
+              'S I': 0.0795, 
+              'C I 3P 1/2': 1.32, 
+              'C I 3P 3/2': 3.96, 
+              'C I 3P 5/2': 6.601, 
+              'C I 1D 5/2': 0.896, 
+              '13C I 3P 1/2': 0.088, 
+              '13C I 3P 3/2': 0.264, 
+              '13C I 3P 5/2': 0.44, 
+              '13C I 1D 5/2': 0.0597}}, 
+              
+    # Second component: exocomet at +13 km/s (LVC 5)
+    1: {'d': 3.82, 
+        'Delta_d': 0.0, 
+        'f_esc': 0.301, 
+        'xi': 0.0, 
+        'T_i': 1757.0, 
+        'log_n_e': 3.46, 
+        'log_T_e': 3.711, 
+        'v': [-0.48, 1.02, 2.52, 4.02, 5.52, 7.02, 8.52], 
+        'alpha': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 
+        'phi_macro': [0.0749, 0.123, 0.493, 1.0, 0.396, 0.149, 0.0752], 
+        'N': {'Fe II': 4.485, 
+              'Ni II': 0.239, 
+              'Ca II': 0.0298, 
+              'Cr II': 0.048, 
+              'Mn II': 0.0215, 
+              'Si II': 3.882, 
+              'S I': 0.0377, 
+              'C I 3P 1/2': 0.852, 
+              'C I 3P 3/2': 2.555, 
+              'C I 3P 5/2': 4.258, 
+              'C I 1D 5/2': 0.0411, 
+              '13C I 3P 1/2': 0.0568, 
+              '13C I 3P 3/2': 0.17, 
+              '13C I 3P 5/2': 0.284, 
+              '13C I 1D 5/2': 0.00274}}, 
+
+    # Third component: small gas cloud at -1 km/s. Not studied in the paper, but adding this component improves a lot the fit in Fe II lines
+    2: {'d': 7.641, 
+        'Delta_d': 0.0,
+          'f_esc': 0.0, 
+          'xi': 0.949, 
+          'T_i': 0.0, 
+          'log_n_e': 0.0, 
+          'log_T_e': 4.0, 
+          'v': [-1.785], 
+          'alpha': [1.0], 
+          'phi_macro': [1.0], 
+          'N': {'Fe II': 0.247, 
+                'Ni II': 0.016, 
+                'Ca II': 0.00136, 
+                'Cr II': 0.00247, 
+                'Mn II': 0.00148, 
+                'Si II': 0.247, 
+                'S I': 0.00247, 
+                'C I 3P 1/2': 0.0411, 
+                'C I 3P 3/2': 0.123, 
+                'C I 3P 5/2': 0.206, 
+                'C I 1D 5/2': 0.0, 
+                '13C I 3P 1/2': 0.00274, 
+                '13C I 3P 3/2': 0.00822, 
+                '13C I 3P 5/2': 0.0137, 
+                '13C I 1D 5/2': 0.0}},
+
+    # Fourth component: circumstellar disc at 0 km/s
+    3: {'d': 63.43, 
+        'Delta_d': 0.0, 
+        'f_esc': 0.498, 
+        'xi': 0.754, 
+        'T_i': 0.0, 
+        'log_n_e': 2.2, 
+        'log_T_e': 2.303, 
+        'v': [0.0], 
+        'alpha': [1.0], 
+        'phi_macro': [1.0], 
+        'N': {'Fe II': 2.46, 
+              'Ni II': 0.145, 
+              'Ca II': 0.16, 
+              'Cr II': 0.0373, 
+              'Mn II': 0.0128, 
+              'Si II': 1.198, 
+              'S I': 0.28, 
+              'C I 3P 1/2': 45.64, 
+              'C I 3P 3/2': 63.93, 
+              'C I 3P 5/2': 30.43, 
+              'C I 1D 5/2': 0.0, 
+              '13C I 3P 1/2': 3.043, 
+              '13C I 3P 3/2': 4.262, 
+              '13C I 3P 5/2': 2.029, 
+              '13C I 1D 5/2': 0.0}}}
+
+
+
+
+meta_params = {0: {'n_pix': 19, 'sp_ref': 'Fe II', 'd_N_bin': 0.3, 'include_collisions': 'all', 'geometry': 'cylind'}, 
+                   1: {'n_pix': 7, 'sp_ref': 'Fe II', 'd_N_bin': 0.3, 'include_collisions': 'all', 'geometry': 'cylind'}, 
+                   2: {'n_pix': 1, 'sp_ref': 'Fe II', 'd_N_bin': 10, 'include_collisions': 'all', 'geometry': 'cylind'}, 
+                   3: {'n_pix': 1, 'sp_ref': 'Fe II', 'd_N_bin': 0.3, 'include_collisions': 'all', 'geometry': 'slab'}, 'comet': {'n_params_comet': 0}}
+
+
+n_comp = 4
+
+list_params_all_components = Routines.dic_to_list(dic_params_all_components, meta_params, Analysis_dic_2025_09_10['List_species'])
+```
+
+```{python}
+# Compute the model and chi2
+
+dic_params_all_components, line_profiles_all_components, abundances_all_components = Routines.calc_abundances(Analysis_dic_2025_09_10, list_params_all_components, meta_params, n_comp)
+transmitted_flux_all_components = Routines.calc_full_profile(Analysis_dic_2025_09_10, abundances_all_components, dic_params_all_components, line_profiles_all_components)
+dic_flux_all_orders_2025_09_10 = Routines.resample_model_orders(Analysis_dic_2025_09_10, transmitted_flux_all_components, n_comp, resample_components = True)
+chi2,dof = Routines.calc_chi2(dic_flux_all_orders_2025_09_10)
+
+print('Chi2 :', chi2)
+print('Reduced Chi2 :', chi2/Analysis_dic_2025_09_10['dof'])
+```
+
+```{python}
+# Plot full spectrum (STIS + COS + HARPS)
+
+Routines.plot_exocomet_model(Analysis_dic_2025_09_10, dic_flux_all_orders_2025_09_10, n_comp, 
+                       plot_model_HR = True, plot_model_LR = False)
+```
+
+```{python}
+# View of the Fe II line at 2629 A
+
+Routines.plot_exocomet_model(Analysis_dic_2025_09_10, dic_flux_all_orders_2025_09_10, n_comp, 
+                       plot_model_HR = True, plot_model_LR = False, plot_error_bar = True, 
+                       line = 2629.0766, xlim = [-150,150])
+```
+
+```{python}
+# View of the C I line at 1560.3 A
+Routines.plot_exocomet_model(Analysis_dic_2025_09_10, dic_flux_all_orders_2025_09_10, n_comp, 
+                       plot_model_HR = True, plot_model_LR = False, plot_error_bar = True,
+                       line = 1560.308, xlim = [-150,150], ylim = [0,2e-12])
+```
+
