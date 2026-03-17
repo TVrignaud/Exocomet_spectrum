@@ -21,8 +21,7 @@ We also provide detailed views of the transmission model fitted to each observat
 - Vrignaud & Lecavelier 2026 (A&A, 707, A60), focused on the transit distance of the exocomets;
 - Vrignaud et al. (in prep., 2026), focused on the C/Fe ratio.
 
-The python codes used to compute this model and plot the data can be retrieved at https://github.com/TVrignaud/Exocomet_spectrum
-Large datasets (Observations and tabulated spectroscopic data) can be found at XXX (Zenodo)
+The python codes used to compute this model and plot the data can be retrieved at https://github.com/TVrignaud/Exocomet_spectrum.
 
 
 ```{python}
@@ -252,7 +251,7 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
 
 *** 
 
-# 2025-04-29 observations
+# 2025-09-10 observations
 
 ***
 
@@ -348,6 +347,8 @@ In total, the model is described by ~ 100 parameters, and is fitted to the entir
 ***
 
 ```{python}
+#| output: false
+#| warning: false
 # Prepare the analysis:
 #   + Recover the observed data
 #   + Identify the fitted lines
@@ -493,6 +494,8 @@ list_params_all_components = Routines.dic_to_list(dic_params_all_components, met
 ```
 
 ```{python}
+#| output: false
+#| warning: false
 # Compute the model and chi2
 dic_params_all_components, line_profiles_all_components, abundances_all_components = Routines.calc_abundances(Analysis_dic_2025_04_29, list_params_all_components, meta_params, n_comp)
 transmitted_flux_all_components = Routines.calc_full_profile(Analysis_dic_2025_04_29, abundances_all_components, dic_params_all_components, line_profiles_all_components)
@@ -541,6 +544,8 @@ Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_0
 ***
 
 ```{python}
+#| output: false
+#| warning: false
 # Prepare the analysis
 import Settings_2025_09_10_refrac_carbon as Settings
 
@@ -675,6 +680,8 @@ list_params_all_components = Routines.dic_to_list(dic_params_all_components, met
 ```
 
 ```{python}
+#| output: false
+#| warning: false
 # Compute the model and chi2
 
 dic_params_all_components, line_profiles_all_components, abundances_all_components = Routines.calc_abundances(Analysis_dic_2025_09_10, list_params_all_components, meta_params, n_comp)

@@ -2024,7 +2024,6 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
             automargin=False,
             tickfont=dict(size=16),
         ),
-        legend=dict(font=dict(size=16), x=0.01, y=0.99, xanchor='left',   yanchor='top', borderwidth=1, tracegroupgap=0),
         margin=dict(l=140, b=80, t=60, autoexpand=False, pad = 10),
         template='plotly_white',
         shapes=[dict(
@@ -2035,8 +2034,8 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
         )]
     )
     
-
-
+    if line is not None : fig.update_layout(legend=dict(font=dict(size=16), x=0.01, y=0.01, xanchor='left',   yanchor='bottom', borderwidth=1, tracegroupgap=0))
+    else                : fig.update_layout(legend=dict(font=dict(size=16), x=0.01, y=0.99, xanchor='left',   yanchor='top', borderwidth=1, tracegroupgap=0))
     fig.show()
 
     return None

@@ -18,7 +18,8 @@ Download `Data_Beta_Pic.npy` and `Data_tabulated.zip` and place them in the root
 
 ## Dependencies
 - Python 3.x
-- `numpy`, `scipy`, `plotly`, `astropy`, 'bindensity' (Bourrier et al. 2025, A&A 691, A113)
+- `numpy`, `scipy`, `plotly`, `astropy`, 
+- `bindensity` (Bourrier et al. 2025, A&A 691, A113)
 
 ## References
 - Vrignaud & Lecavelier (2026, A&A, 707, A60)
