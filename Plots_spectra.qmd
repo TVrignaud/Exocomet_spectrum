@@ -16,10 +16,13 @@ This notebook provides interactive visualisations of Beta Pictoris spectra obtai
 
 Both observations reveal absorption signatures from transiting exocomet gaseous tails, detected in lines of metallic ions (Fe II, Ni II, ...) and volatile tracers (C I). This notebook is designed to help explore and visualise these signatures interactively.
 
-We also provide detailed views of our transmission model for the exocomet signatures detected on both epochs. The physical description of this model is presented in:
+We also provide detailed views of the transmission model fitted to each observational dataset. The physical description of this model is presented in:
 
-- Vrignaud & Lecavelier 2026 (A&A, 707, A60), focused on the transit distance of the exocomets
-- Vrignaud et al. (in prep., 2026); focused on the C/Fe ratio.
+- Vrignaud & Lecavelier 2026 (A&A, 707, A60), focused on the transit distance of the exocomets;
+- Vrignaud et al. (in prep., 2026), focused on the C/Fe ratio.
+
+The python codes used to compute this model and plot the data can be retrieved at https://github.com/TVrignaud/Exocomet_spectrum
+Large datasets (Observations and tabulated spectroscopic data) can be found at XXX (Zenodo)
 
 
 ```{python}
@@ -118,10 +121,10 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
 
 Spectra obtained on April 19 and September 10, 2025 are shown around three Fe II, C I and Ca II lines
 
-We notice several strong absorption features in both spectrum: 
+Both spectra exhibit sharp absorption components at low velocities:
 
-- Three low-velocity comets at -7, +3 and + 10 km/s in the April 29 spectrum;
-- Two low-velocity comets at +4 and + 13 km/s in the September 10, 2025 spectrum. 
+- Three low-velocity comets at -7, +3 and + 10 km/s (respectively LVC 1, 2, 3) in the April 29 spectrum;
+- Two low-velocity comets at +4 and + 13 km/s (respectively LVC 4, 5) in the September 10, 2025 spectrum. 
 
 These five low-velocity comets (LVC) are studied in Vrignaud & Lecavelier 2026 (A&A, 707, A60) and Vrignaud et al. (in prep., 2026)
 
@@ -221,7 +224,7 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
 
 ### Zoom on two Fe II and C I lines
 
-The three LVCs (at -7, +3 and +10 km/s) are clearly distinguishable in the Fe II line, a bit more saturated in C I
+The three LVCs (at -7, +3 and +10 km/s) are clearly distinguishable in the Fe II line. They are a bit more saturated in C I.
 
 ```{python}
 # Zoomed-in view of the 2025-04-29 spectrum around the Fe II line at 2629 A (STIS)
@@ -296,7 +299,7 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
 
 ### Zoom on two Fe II and C I lines
 
-Again, the two LVCs (at + 4 and + 12 km/s) are clearly distinguishable in the Fe II line, a bit more saturated in C I
+Again, the two LVCs (at + 4 and + 12 km/s) are clearly distinguishable in the Fe II line, and are slightly more saturated in C I
 
 ```{python}
 # Zoomed-in view of the 2025-09-10 spectrum around the Fe II line at 2629 A (STIS)
@@ -331,7 +334,12 @@ Spectra from each epoch were fitted using the model described in Vrignaud & Leca
 - Its distance to the star (which sets the efficiency of radiative excitation, and thus the excitation state of the gas)
 - Its composition (one column density for each species; here we fitted Fe II, Ni II, Si II, Cr II, Mn II, Ca II, S I and C I lines)
 
-For each epoch, we thus fit for several LVCs simultaneously (LVC 1, 2 and 3 for April 29 spectrum; LVC 4 and 5 for September 10 spectrum), as well as for the stable disc signature. In total, the model is described by ~ 100 parameters.
+For each epoch, several absorption components were modeled: 
+- The LVCs (LVC 1, 2 and 3 for April 29 spectrum; LVC 4 and 5 for September 10 spectrum);
+- The circumstellar disc (narrow feature at 0 km/s, detected mostly in lines from the ground states of the studied species)
+- The ISM, at -10 km/s. 
+
+In total, the model is described by ~ 100 parameters, and is fitted to the entire observed spectrum (10,000 to 20,000 degrees of freedom).
 
 ***
 
@@ -497,11 +505,11 @@ print('Reduced Chi2 :', chi2/Analysis_dic_2025_04_29['dof'])
 
 ### View of full fitted spectrum: 
 
-- Observations are shown in grey
-- The reference spectrum is shown in black
-- Contributions from the three Low-Velocity Exocomets (LVC) are shown in blue (LVC 1), green (LVC 2) and orange (LVC 3)
-- Contributions from the disc and the ISM are shown in dashed and dot-dashed, respectively
-- The full model, convolved by the instrumental LSF, is shown in red
+- Observations are shown in grey;
+- The reference spectrum is shown in black;
+- Contributions from the three Low-Velocity Exocomets (LVC) are shown in blue (LVC 1), green (LVC 2) and orange (LVC 3);
+- Contributions from the disc and the ISM are shown in dashed and dot-dashed, respectively;
+- The full model, convolved by the instrumental LSF, is shown in red.
 
 ```{python}
 # Plot full spectrum (STIS + COS + HARPS)
@@ -680,11 +688,11 @@ print('Reduced Chi2 :', chi2/Analysis_dic_2025_09_10['dof'])
 
 ### View of full fitted spectrum: 
 
-- Observations are shown in grey
-- The reference spectrum is shown in black
-- Contributions from the three Low-Velocity Exocomets (LVC) are shown in purple (LVC 4) and cyan (LVC 5)
-- Contributions from the disc and the ISM are shown in dashed and dot-dashed, respectively
-- The full model, convolved by the instrumental LSF, is shown in red
+- Observations are shown in grey;
+- The reference spectrum is shown in black;
+- Contributions from the three Low-Velocity Exocomets (LVC) are shown in purple (LVC 4) and cyan (LVC 5);
+- Contributions from the disc and the ISM are shown in dashed and dot-dashed, respectively;
+- The full model, convolved by the instrumental LSF, is shown in red.
 
 ```{python}
 # Plot full spectrum (STIS + COS + HARPS)
