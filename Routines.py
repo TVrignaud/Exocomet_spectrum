@@ -10,19 +10,8 @@ from scipy.sparse import csc_matrix
 from bindensity import resampling    # Bourrier et al. 2025. Install with 'pip install bindensity'. See https://gitlab.unige.ch/delisle/bindensity
 import copy
 import plotly.graph_objects as go
-import sys
-import json
 
 import List_studied_lines as List_studied_lines
-
-plt.rcParams['xtick.labelsize']=20
-plt.rcParams['ytick.labelsize']=20
-
-plt.rcParams['mathtext.fontset'] = 'stix'
-plt.rcParams['font.family'] = 'STIXGeneral'
-
-
-
 
 
 
@@ -1540,15 +1529,14 @@ def filter_nan(a, cond):
 
 
 
-
 #Function to plot observations: 
 #   + Overlay spectra from different epochs with different colors
 #   + No model can be shown
 #   + Plot flux vs RV by settings line = (wavelength of your favorite line, in A)
-#   + Show a given reference spectrum with plot_reference = '...'
-def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar=False, plot_reference=None,
-               visits_emphasis=[], date_to_color={},
-               xlim=None, ylim=None, line=None, title = None, loc_label = 'upper right'):
+#   + Show a given reference spectrum by setting plot_reference = '...' (e.g. 'Photospheric continuum' to get the photospheric spectrum of Beta Pic)
+def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = None,
+                           visits_emphasis = [], date_to_color = {},
+                           xlim = None, ylim = None, line = None, title = None, loc_label = 'upper right'):
 
     fig = go.Figure()
     dates_in_legend = set()
@@ -1558,7 +1546,7 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar=False, p
 
 
     legend_anchor_map = {
-    'best':         {},   # dict vide = Plotly gère tout seul
+    'best':         {},   
     'upper right':  dict(x=0.99, y=0.99, xanchor='right',  yanchor='top'),
     'upper left':   dict(x=0.01, y=0.99, xanchor='left',   yanchor='top'),
     'lower right':  dict(x=0.99, y=0.01, xanchor='right',  yanchor='bottom'),
@@ -1569,7 +1557,7 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar=False, p
     legend_pos = legend_anchor_map.get(loc_label, {})
 
 
-    # Spectra which are not emphasized
+    # Plot spectra which are not emphasized
     for date in visits_plots:
         if date in visits_emphasis: continue
         for spec in spec_dic['spec_renorm'][inst][date]:
@@ -1584,7 +1572,6 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar=False, p
                 if xlim is not None: cond_plot = ((x >= xlim[0]) & (x <= xlim[1]))
                 else               : cond_plot = np.ones_like(x, dtype = bool)
 
-                # Récupère la couleur de base, avec fallback sur un gris neutre
                 base_color = date_to_color.get(date, '#6464C8')
                 color = apply_alpha_on_white(base_color, 0.3)
                 
@@ -1613,7 +1600,7 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar=False, p
 
 
 
-    # Spectra which are emphasized
+    # Plot spectra which are emphasized
     for date in visits_plots:
         if date not in visits_emphasis: continue
         for spec in spec_dic['spec_renorm'][inst][date]:
@@ -1656,7 +1643,7 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar=False, p
                     max_x = max(max_x, np.nanmax(x[cond_plot]))
 
 
-    # Spectre de référence
+    # Plot reference spectrum
     if plot_reference is not None:
         spline        = spec_dic['reference'][inst][plot_reference]['spline']
         valid_domains = spec_dic['reference'][inst][plot_reference]['valid_domains']
@@ -1681,19 +1668,19 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar=False, p
 
 
 
-    # Axes et mise en forme
-    xlabel = "Velocity (km/s)" if line is not None else "Wavelength (Å)"
+    # Layout
+    xlabel = "Radial velocity (km/s)" if line is not None else "Wavelength (Å)"
 
     fig.update_layout(
         font=dict(family='STIX Two Text'),
         title=dict(
         font=dict(size=22),
         text=title,
-        x=0.5,        # centré
+        x=0.5,        
         y=0.95,
         xanchor='center',
        ),
-        width=700, height=400,
+        width=1100, height=530,
         xaxis=dict(
             title=dict(text=xlabel, font=dict(size=22), standoff=20),
             range=xlim if xlim is not None else [min_x - 0.05*(max_x-min_x), max_x + 0.05*(max_x-min_x)],
@@ -1706,8 +1693,8 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar=False, p
             title=dict(text="Flux (erg/s/cm²/Å)", font=dict(size=22)),
             range=ylim,
             rangemode='nonnegative',
-            exponentformat='power',   # affiche 2·10^XX  (plus propre)
-            showexponent='all',       # applique le format à tous les ticks
+            exponentformat='power',  
+            showexponent='all',       
             automargin=True,
             tickfont=dict(size=16),
         ),
@@ -1724,14 +1711,6 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar=False, p
 
 
     fig.show()
-
-    total_points = sum(len(t.x) for t in fig.data if t.x is not None)
-    print(f"Nombre total de points : {total_points:,}")
-
-
-    fig_json = fig.to_json()
-    size_mb = sys.getsizeof(fig_json) / 1024**2
-    print(f"Taille figure : {size_mb:.2f} MB")
 
     return None  
 
@@ -1840,9 +1819,7 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                             
                             # ISM
                             flux_ISM_HR = copy.deepcopy(dic_flux_all_orders[inst][date][spec][i_ord]['Flux_ISM_HR'])
-                            cond = (flux_ISM_HR < 0.999) 
-                            flux_ISM_HR = np.nan
-                            
+                            cond = (flux_ISM_HR < 0.999)                             
                             if np.any(cond) : 
                                 fig.add_trace(go.Scatter(
                                     x=filter_nan(x_ord_HR, cond),
@@ -1914,7 +1891,6 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
 
                             flux_model = dic_flux_all_orders[inst][date][spec][i_ord]['Flux_model_HR_convolved']
                             cond = (flux_model < 0.999) 
-                            # flux_model[~cond] = np.nan
                             if np.any(cond) :
                                 fig.add_trace(go.Scatter(
                                 x=filter_nan(x_ord_HR, cond),
@@ -2002,9 +1978,6 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
 
         if xlim is not None: cond &= ((x_continuum >= xlim[0]) & (x_continuum <= xlim[1]))
 
-
-
-
         fig.add_trace(go.Scatter(
             x=filter_nan(x_continuum, cond),
             y=filter_nan(func_continuum_plot(wl_continuum), cond),
@@ -2015,25 +1988,26 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
             line=dict(color='black', width=3, dash = 'solid'),
         ))
 
-
         labels_in_legend.add('Reference spectrum')
 
         min_x = min(min_x, np.nanmin(x_ord_LR))
         max_x = max(max_x, np.nanmax(x_ord_LR))
+
+
                             
-    # Axes et mise en forme
-    xlabel = "Velocity (km/s)" if line is not None else "Wavelength (Å)"
+    # Layout
+    xlabel = "Radial velocity (km/s)" if line is not None else "Wavelength (Å)"
 
     fig.update_layout(
         font=dict(family='STIX Two Text'),
         title=dict(
         text=title,
         font=dict(size=22),
-        x=0.5,        # centré
+        x=0.5,       
         y=0.96,
         xanchor='center',
        ),
-        width=700, height=400,
+        width=1100, height=530,
         xaxis=dict(
             title=dict(text=xlabel, font=dict(size=20), standoff=20),
             range=xlim if xlim is not None else [min_x - 0.05*(max_x-min_x), max_x + 0.05*(max_x-min_x)],
@@ -2045,8 +2019,8 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
             title=dict(text="Flux (erg/s/cm²/Å)", font=dict(size=20)),
             range=ylim,
             rangemode='nonnegative',
-            exponentformat='power',   # affiche 2·10^XX  (plus propre)
-            showexponent='all',       # applique le format à tous les ticks
+            exponentformat='power',  
+            showexponent='all',      
             automargin=False,
             tickfont=dict(size=16),
         ),
@@ -2064,15 +2038,6 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
 
 
     fig.show()
-
-    total_points = sum(len(t.x) for t in fig.data if t.x is not None)
-    print(f"Nombre total de points : {total_points:,}")
-
-
-    fig_json = fig.to_json()
-    size_mb = sys.getsizeof(fig_json) / 1024**2
-    print(f"Taille figure : {size_mb:.2f} MB")
-    
 
     return None
 

@@ -1,46 +1,49 @@
 ---
-title: Retrieve observations
+title: Analysis of exocomet spectra
 format:
   html:
     code-fold: true
-jupyter: env_spectral_analysis
+    page-layout: full
+jupyter: python3
 ---
+
+
+### Théo Vrignaud — March 17, 2026
+
+***
+
+This notebook provides interactive visualisations of Beta Pictoris spectra obtained on **April 29** and **September 10, 2025**, with the Hubble Space Telescope (STIS and COS; program #17790) and the HARPS spectrograph at the 3.6m ESO telescope in La Silla, Chile (program 115.282N).
+
+Both observations reveal absorption signatures from transiting exocomet gaseous tails, detected in lines of metallic ions (Fe II, Ni II, ...) and volatile tracers (C I). This notebook is designed to help explore and visualise these signatures interactively.
+
+We also provide detailed views of our transmission model for the exocomet signatures detected on both epochs. The physical description of this model is presented in:
+
+- Vrignaud & Lecavelier 2026 (A&A, 707, A60), focused on the transit distance of the exocomets
+- Vrignaud et al. (in prep., 2026); focused on the C/Fe ratio.
+
 
 ```{python}
 import numpy as np
-import matplotlib.pyplot as plt
-import copy
-
 import Routines
-
-%matplotlib widget
-plt.ion()
 ```
 
-```{python}
-import importlib.util
-import sys
+***
+# Overview of the spectral data
 
-def import_module(mod_path):
-    spec = importlib.util.spec_from_file_location('imported_modules', mod_path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules['imported_modules'] = module
-    spec.loader.exec_module(module)    
-    return module    
+This section provides interactive views of the Beta Pictoris spectra collected on **April 29** and **September 10, 2025**. For each instrument (STIS, COS, and HARPS), both epochs are compared against archival observations taken at different epochs.
 
-Routines = import_module('Routines.py')
-```
+For STIS and HARPS, we overplot in black a reconstruction of the photospheric continuum, obtained by averaging all available spectra over spectral regions unaffected by cometary absorption, and interpolating the result using a cubic spline.
 
-
-Observations of Beta Pic are stored in Data_Beta_Pic.npy
-
-The dictionnary is organised as follows: 
-
-- spec_dic['spec_renorm'] contains the observed spectra, which are organised by instrument/date of observation/spectrum/order.
-- spec_dic['reference'] contains estimates of the stellar continuum without absorption from exocomets. 
-
+***
 
 ```{python}
+# Retrieve data : 
+#    + Observations of Beta Pic are stored in Data_Beta_Pic.npy
+#    + The dictionnary is organised as follows: 
+#       - spec_dic['spec_renorm'] contains the observed spectra, which are organised by instrument/date of observation/spectrum/order.
+#       - spec_dic['reference'] contains estimates of the stellar continuum without absorption from exocomets. 
+
+
 spec_dic = np.load('Data_Beta_Pic.npy', allow_pickle = True).item()
 
 
@@ -60,18 +63,8 @@ list_visits_COS  =  ['2014-02-22',  '2015-12-10',  '2016-01-30',  '2017-04-23',
 
 
 list_visits_HARPS = ['2024-04-17', '2024-08-08', '2025-04-29', '2025-09-03', '2025-09-10']
-```
 
-# Overview of $\beta\, \text{Pic}$ spectra
-
-
-Both spectra (2025-04-29 and 2025-09-10) are compared with spectra taken at other epochs (from 1997 to 2025), for STIS, COS and HARPS. 
-
-For STIS and HARPS, we also provide estimates of the stellar photospheric continuum, free of any circumstellar absorption. These estimates were obtained by combining all existing Beta Pic spectra from these instruments.
-
-```{python}
 # Attribute color to each spectrum
-
 colors = ['royalblue', 'firebrick', 'darkorange', 'seagreen', 'darkviolet', 'goldenrod', 'deeppink', 'teal', 'saddlebrown', 'mediumslateblue']
 date_to_color = {}
 for i, date in enumerate(sorted(set(list_visits_STIS) | set(list_visits_COS) | set(list_visits_HARPS))) : date_to_color[date] = colors[i%len(colors)]
@@ -119,7 +112,20 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
                                 date_to_color = date_to_color, xlim = [3900,4000], title = 'Beta Pic (HST/HARPS)')
 ```
 
+***
+
 # Zoom on individual lines
+
+Spectra obtained on April 19 and September 10, 2025 are shown around three Fe II, C I and Ca II lines
+
+We notice several strong absorption features in both spectrum: 
+
+- Three low-velocity comets at -7, +3 and + 10 km/s in the April 29 spectrum;
+- Two low-velocity comets at +4 and + 13 km/s in the September 10, 2025 spectrum. 
+
+These five low-velocity comets (LVC) are studied in Vrignaud & Lecavelier 2026 (A&A, 707, A60) and Vrignaud et al. (in prep., 2026)
+
+***
 
 ```{python}
 # Fe II line at 2629 A
@@ -157,15 +163,23 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
                     line = line, xlim = [-150,150], title = 'Ca II - 3933 Å (HARPS)', loc_label = 'lower right')
 ```
 
+***
+
 # Extracting exocomet spectra
 
-For each epoch, a specific reference spectrum was built to isolate the absorption signatures of low-velocity comets
+For each epoch, a specific reference spectrum was built to isolate the absorption signatures of the five LVCs
 
 - For STIS, the reference spectrum covers the whole 1500-2900 A range
 - For COS, the reference spectrum targets only specific lines of C I, Ni II, S I and Si II. Other species are either strongly saturated or affected by geocoronal emission
 - For HARPS, the reference spectrum covers the Ca II doublet only
 
-### 2025-04-29
+***
+
+# 2025-04-29 observations
+
+***
+
+### HST/STIS
 
 ```{python}
 # View of the STIS spectrum taken on 2025-04-29
@@ -178,6 +192,8 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
                                 visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = '2025-04-29 (HST/STIS)')
 ```
 
+### HST/COS
+
 ```{python}
 # View of the COS spectrum taken on 2025-04-29
 inst = 'COS'
@@ -187,6 +203,8 @@ plot_error_bar = False
 
 Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-04-29 COS', visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = '2025-04-29 (HST/COS)')
 ```
+
+### HARPS
 
 ```{python}
 # View of the HARPS spectrum taken on 2025-04-29
@@ -200,6 +218,10 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
                                 date_to_color = date_to_color, title = '2025-04-29 (HARPS)',
                                 xlim = [3900,4000])
 ```
+
+### Zoom on two Fe II and C I lines
+
+The three LVCs (at -7, +3 and +10 km/s) are clearly distinguishable in the Fe II line, a bit more saturated in C I
 
 ```{python}
 # Zoomed-in view of the 2025-04-29 spectrum around the Fe II line at 2629 A (STIS)
@@ -225,7 +247,13 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
                     line = line, xlim = [-150,150], date_to_color = date_to_color, title = 'C I - 1560 Å (HST/STIS)')
 ```
 
-### 2025-09-10
+*** 
+
+# 2025-04-29 observations
+
+***
+
+### HST/STIS
 
 ```{python}
 # View of the STIS spectrum taken on 2025-09-10
@@ -240,6 +268,8 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
 
 ```
 
+### HST/COS
+
 ```{python}
 # View of the COS spectrum taken on 2025-09-10
 inst = 'COS'
@@ -249,6 +279,8 @@ plot_error_bar = False
 
 Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-09-10 COS', visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = '2025-09-10 (COS)')
 ```
+
+### HARPS
 
 ```{python}
 # View of the HARPS spectrum taken on 2025-09-10
@@ -261,6 +293,10 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
                                 visits_emphasis = visits_emphasis, date_to_color = date_to_color, title = '2025-09-10 (HARPS)',
                                 xlim = [3900,4000])
 ```
+
+### Zoom on two Fe II and C I lines
+
+Again, the two LVCs (at + 4 and + 12 km/s) are clearly distinguishable in the Fe II line, a bit more saturated in C I
 
 ```{python}
 # Zoomed-in view of the 2025-09-10 spectrum around the Fe II line at 2629 A (STIS)
@@ -286,15 +322,22 @@ Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = F
                     line = line, xlim = [-150,150], title = 'C I - 1560 Å (HST/STIS)')
 ```
 
-# Overplot of the fitted model
+***
 
-For each date of observations, we compare the observed spectrum (HST/HARPS) with our best fit model. 
+# View of the fitted model
 
-In each case, the model features several (2-3) transiting exocomets at distinct radial velocities, as well as the curcumstellar gaseous disc. 
+Spectra from each epoch were fitted using the model described in Vrignaud & Lecavelier 2026 (A&A, 707, A60) and Vrignaud et al. (in prep., 2026). In this model, each low-velocity exocomet (LVC) is described using few parameters:
+- Its line profile (reconstructed using a PCHIP interpolation)
+- Its distance to the star (which sets the efficiency of radiative excitation, and thus the excitation state of the gas)
+- Its composition (one column density for each species; here we fitted Fe II, Ni II, Si II, Cr II, Mn II, Ca II, S I and C I lines)
 
-The reduced chi2 have been brought to ~ 1 by increasing the error bars on the pixel flux depending on the absorption depth, to account for systematic uncertainties introduced by the simplicity of the model
+For each epoch, we thus fit for several LVCs simultaneously (LVC 1, 2 and 3 for April 29 spectrum; LVC 4 and 5 for September 10 spectrum), as well as for the stable disc signature. In total, the model is described by ~ 100 parameters.
 
-### 2025-04-29
+***
+
+# 2025-04-29 observations
+
+***
 
 ```{python}
 # Prepare the analysis:
@@ -452,11 +495,21 @@ print('Chi2 :', chi2)
 print('Reduced Chi2 :', chi2/Analysis_dic_2025_04_29['dof'])
 ```
 
+### View of full fitted spectrum: 
+
+- Observations are shown in grey
+- The reference spectrum is shown in black
+- Contributions from the three Low-Velocity Exocomets (LVC) are shown in blue (LVC 1), green (LVC 2) and orange (LVC 3)
+- Contributions from the disc and the ISM are shown in dashed and dot-dashed, respectively
+- The full model, convolved by the instrumental LSF, is shown in red
+
 ```{python}
 # Plot full spectrum (STIS + COS + HARPS)
 Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_04_29, n_comp, 
                              plot_model_HR = True, plot_model_LR = False, plot_error_bar = False)
 ```
+
+### Zoom to two Fe II and C I lines:
 
 ```{python}
 # View of the Fe II line at 2629 A
@@ -473,7 +526,11 @@ Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_0
                        line = 1560.308, xlim = [-150,150], ylim = [0,2e-12])
 ```
 
-### 2025-09-10
+***
+
+# 2025-09-10 observations
+
+***
 
 ```{python}
 # Prepare the analysis
@@ -621,12 +678,22 @@ print('Chi2 :', chi2)
 print('Reduced Chi2 :', chi2/Analysis_dic_2025_09_10['dof'])
 ```
 
+### View of full fitted spectrum: 
+
+- Observations are shown in grey
+- The reference spectrum is shown in black
+- Contributions from the three Low-Velocity Exocomets (LVC) are shown in purple (LVC 4) and cyan (LVC 5)
+- Contributions from the disc and the ISM are shown in dashed and dot-dashed, respectively
+- The full model, convolved by the instrumental LSF, is shown in red
+
 ```{python}
 # Plot full spectrum (STIS + COS + HARPS)
 
 Routines.plot_exocomet_model(Analysis_dic_2025_09_10, dic_flux_all_orders_2025_09_10, n_comp, 
                        plot_model_HR = True, plot_model_LR = False)
 ```
+
+### Zoom to two Fe II and C I lines:
 
 ```{python}
 # View of the Fe II line at 2629 A
