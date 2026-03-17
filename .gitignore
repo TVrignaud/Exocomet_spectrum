@@ -5,7 +5,6 @@ Data_tabulated/
 # Fichiers générés par Quarto
 .quarto/
 Plots_spectra.html
-Plots_spectra.ipynb
 Plots_spectra.quarto_ipynb
 Plots_spectra_files/
 *.quarto_ipynb*
