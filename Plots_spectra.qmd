@@ -8,6 +8,8 @@ jupyter: python3
 ---
 
 
+# Analysis of exocomet spectra
+
 ### Théo Vrignaud — March 17, 2026
 
 ***
@@ -23,7 +25,6 @@ We also provide detailed views of the exocomet model used to fit each observatio
 
 The python codes used to plot the data and compute the transmission model can be retrieved at https://github.com/TVrignaud/Exocomet_spectrum.
 
-
 ```{python}
 import numpy as np
 import Routines
@@ -35,6 +36,8 @@ import Routines
 This section provides interactive views of the Beta Pictoris spectra collected on **April 29** and **September 10, 2025**. For each instrument (STIS, COS, and HARPS), both epochs are compared against archival observations taken at different epochs.
 
 For STIS and HARPS, we overplot in black a reconstruction of the photospheric continuum, obtained by averaging all available spectra over spectral regions unaffected by cometary absorption, and interpolating the result using a cubic spline.
+
+Note that the spectra are shown in Beta Pic rest frame (v = + 20.5 km/s; Brandeker+2011)
 
 ***
 
@@ -135,7 +138,7 @@ inst = 'STIS'
 visits_plots = list_visits_STIS
 visits_emphasis = ['2025-04-29', '2025-09-10']
 plot_error_bar = False
-line = 2629.0766 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+line = 2629.0766
 
 Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Photospheric continuum', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
                     line = line, xlim = [-150,150], loc_label = 'lower right', title = 'Fe II - 2629 Å (HST/STIS)')
@@ -147,7 +150,7 @@ inst = 'STIS'
 visits_plots = list_visits_STIS
 visits_emphasis = ['2025-04-29', '2025-09-10']
 plot_error_bar = False
-line = 1560.31 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+line = 1560.31
 
 Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Photospheric continuum', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
                     line = line, xlim = [-150,150], title = 'C I - 1560 Å (HST/STIS)')
@@ -159,7 +162,7 @@ inst = 'HARPS'
 visits_plots = list_visits_HARPS
 visits_emphasis = ['2025-04-29', '2025-09-10']
 plot_error_bar = False
-line = 3933.661 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+line = 3933.661
 
 Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Photospheric continuum', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
                     line = line, xlim = [-150,150], title = 'Ca II - 3933 Å (HARPS)', loc_label = 'lower right')
@@ -231,7 +234,7 @@ inst = 'STIS'
 visits_plots = ['2025-04-29']
 visits_emphasis = ['2025-04-29']
 plot_error_bar = False
-line = 2629.0766 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+line = 2629.0766
 
 Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-04-29 STIS', visits_emphasis = visits_emphasis, 
                     line = line, xlim = [-150,150], date_to_color = date_to_color, title = 'Fe II - 2629 Å (HST/STIS)')
@@ -243,7 +246,7 @@ inst = 'STIS'
 visits_plots = ['2025-04-29']
 visits_emphasis = ['2025-04-29']
 plot_error_bar = False
-line = 1560.31 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+line = 1560.31
 
 Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-04-29 STIS', visits_emphasis = visits_emphasis, 
                     line = line, xlim = [-150,150], date_to_color = date_to_color, title = 'C I - 1560 Å (HST/STIS)')
@@ -306,7 +309,7 @@ inst = 'STIS'
 visits_plots = ['2025-09-10']
 visits_emphasis = ['2025-09-10']
 plot_error_bar = False
-line = 2629.0766 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+line = 2629.0766
 
 Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-09-10 STIS', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
                     line = line, xlim = [-150,150], title = 'Fe II - 2629 Å (HST/STIS)')
@@ -318,7 +321,7 @@ inst = 'STIS'
 visits_plots = ['2025-09-10']
 visits_emphasis = ['2025-09-10']
 plot_error_bar = False
-line = 1560.31 * (1 + Routines.rv_Beta_Pic/Routines.const_c_km)
+line = 1560.31
 
 Routines.plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False, plot_reference = 'Continuum 2025-09-10 STIS', visits_emphasis = visits_emphasis, date_to_color = date_to_color, 
                     line = line, xlim = [-150,150], title = 'C I - 1560 Å (HST/STIS)')
@@ -349,7 +352,7 @@ In total, the model is described by ~ 100 parameters, and is fitted to the entir
 ```{python}
 #| output: false
 #| warning: false
-# Prepare the analysis:
+# # Prepare the analysis:
 #   + Recover the observed data
 #   + Identify the fitted lines
 #   + Retrieve datasets of spectroscopic data for the studied species, to calculate their excitation states
@@ -496,7 +499,7 @@ list_params_all_components = Routines.dic_to_list(dic_params_all_components, met
 ```{python}
 #| output: false
 #| warning: false
-# Compute the model and chi2
+# # Compute the model and chi2
 dic_params_all_components, line_profiles_all_components, abundances_all_components = Routines.calc_abundances(Analysis_dic_2025_04_29, list_params_all_components, meta_params, n_comp)
 transmitted_flux_all_components = Routines.calc_full_profile(Analysis_dic_2025_04_29, abundances_all_components, dic_params_all_components, line_profiles_all_components)
 dic_flux_all_orders_2025_04_29 = Routines.resample_model_orders(Analysis_dic_2025_04_29, transmitted_flux_all_components, n_comp, resample_components = True)
@@ -513,6 +516,8 @@ print('Reduced Chi2 :', chi2/Analysis_dic_2025_04_29['dof'])
 - Contributions from the three Low-Velocity Exocomets (LVC) are shown in blue (LVC 1), green (LVC 2) and orange (LVC 3);
 - Contributions from the disc and the ISM are shown in dashed and dot-dashed, respectively;
 - The full model, convolved by the instrumental LSF, is shown in red.
+
+Each fitted line is indicated with a purple tick. The species, excitation level, and oscillator strength can be displayed by hovering over the tick.
 
 ```{python}
 # Plot full spectrum (STIS + COS + HARPS)
@@ -533,8 +538,8 @@ Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_0
 # View of the C I line at 1560.3 A
 
 Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_04_29, n_comp, 
-                       plot_model_HR = True, plot_model_LR = False, 
-                       line = 1560.308, xlim = [-150,150], ylim = [0,2e-12], plot_error_bar = True)
+                       plot_model_HR = True, plot_model_LR = False, plot_error_bar = True, 
+                       line = 1560.308, xlim = [-150,150], ylim = [0,2e-12])
 ```
 
 ***
@@ -546,7 +551,7 @@ Routines.plot_exocomet_model(Analysis_dic_2025_04_29, dic_flux_all_orders_2025_0
 ```{python}
 #| output: false
 #| warning: false
-# Prepare the analysis
+# # Prepare the analysis
 import Settings_2025_09_10_refrac_carbon as Settings
 
 Analysis_dic_2025_09_10 = Routines.Prepare_analysis(Settings.settings)
@@ -682,7 +687,7 @@ list_params_all_components = Routines.dic_to_list(dic_params_all_components, met
 ```{python}
 #| output: false
 #| warning: false
-# Compute the model and chi2
+# # Compute the model and chi2
 
 dic_params_all_components, line_profiles_all_components, abundances_all_components = Routines.calc_abundances(Analysis_dic_2025_09_10, list_params_all_components, meta_params, n_comp)
 transmitted_flux_all_components = Routines.calc_full_profile(Analysis_dic_2025_09_10, abundances_all_components, dic_params_all_components, line_profiles_all_components)
@@ -700,6 +705,8 @@ print('Reduced Chi2 :', chi2/Analysis_dic_2025_09_10['dof'])
 - Contributions from the three Low-Velocity Exocomets (LVC) are shown in purple (LVC 4) and cyan (LVC 5);
 - Contributions from the disc and the ISM are shown in dashed and dot-dashed, respectively;
 - The full model, convolved by the instrumental LSF, is shown in red.
+
+Each fitted line is indicated with a purple tick. The species, excitation level, and oscillator strength can be displayed by hovering over the tick.
 
 ```{python}
 # Plot full spectrum (STIS + COS + HARPS)

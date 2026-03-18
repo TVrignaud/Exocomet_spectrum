@@ -876,7 +876,7 @@ def resample_model_orders(Analysis_dic, transmitted_flux_all_components, n_comp,
     dic_flux_all_orders = {}
     table_wl_HR = Analysis_dic['table_wl_HR']
 
-# Iterate over instrument, date, spectrum, and order
+    # Iterate over instrument, date, spectrum, and order
     for inst in  Analysis_dic['Fitted_orders'] : 
         dic_flux_all_orders[inst] = {}    
         for date in Analysis_dic['Fitted_orders'][inst] : 
@@ -1520,6 +1520,72 @@ def filter_nan(a, cond):
     return np.array(a_filtered)
 
 
+def add_line_ticks(fig, line=None, xlim=None):
+
+    # Récupère toutes les données x,y de toutes les traces
+    ref_trace = next(t for t in fig.data if t.name == 'Reference spectrum')
+    all_x = np.array(ref_trace.x)
+    all_y = np.array(ref_trace.y)
+
+    for species in ['Fe II', 'Ni II', 'Si II', 'Mn II', 'Cr II', 'Ca II', 'S I', 'C I 3P 1/2', 'C I 3P 3/2', 'C I 3P 5/2', 'C I 1D 5/2'] :
+        transitions = List_studied_lines.dic_all_lines[species]
+        for transition in transitions:
+            wl_line = transition[0]
+
+            if line is not None:
+                x_line = (wl_line - line) / line * const_c_km
+            else:
+                x_line = wl_line
+
+            if xlim is not None and not (xlim[0] <= x_line <= xlim[1]):
+                continue
+
+            # Compute y of tick
+            if line is not None: range_x = [[x_line-60, x_line+60]]
+            else               : range_x = [[x_line-0.4, x_line+0.4]]
+
+            mask = np.zeros_like(all_x, dtype = bool)
+            for i in range(len(range_x)) : mask |= (all_x >= range_x[i][0]) & (all_x <= range_x[i][1])
+            
+            local_y = all_y[mask]
+            local_y = local_y[~np.isnan(local_y)]
+
+            if len(local_y) == 0:
+                continue
+
+            y_tick = np.nanmean(local_y) * 1.3
+
+            # Compute height of tick
+            if line is not None: range_x = [[x_line-600, x_line+600]]
+            else               : range_x = [[x_line-4, x_line+4]]
+
+            mask = np.zeros_like(all_x, dtype = bool)
+            for i in range(len(range_x)) : mask |= (all_x >= range_x[i][0]) & (all_x <= range_x[i][1])
+            
+            local_y = all_y[mask]
+            local_y = local_y[~np.isnan(local_y)]
+
+            if len(local_y) == 0:
+                continue
+
+            tick_height = np.nanmean(local_y) * 0.06
+
+            # Ajoute le tick comme une annotation verticale
+
+            fig.add_trace(go.Scatter(
+                x=[x_line, x_line],
+                y=[y_tick, y_tick + tick_height],
+                mode='lines',
+                line=dict(color="#9071CA", width=2.2),
+                name=species,
+                text=[f"{species}<br>λ = {wl_line:.3f} Å<br>E = {transition[2]:.0f} cm⁻¹<br>f = {transition[1]:.3f}",
+                      f"{species}<br>λ = {wl_line:.4f} Å<br>E = {transition[2]:.0f} cm⁻¹<br>f = {transition[1]:.3f}"],
+                hoverinfo='text',
+                showlegend=False,
+            ))
+
+
+    return None
 
 #Function to plot observations: 
 #   + Overlay spectra from different epochs with different colors
@@ -1548,13 +1614,15 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False,
     }
     legend_pos = legend_anchor_map.get(loc_label, {})
 
+    fact_redshift = (1 + rv_Beta_Pic/const_c_km)
+
 
     # Plot spectra which are not emphasized
     for date in visits_plots:
         if date in visits_emphasis: continue
         for spec in spec_dic['spec_renorm'][inst][date]:
             for i_ord in range(len(spec_dic['spec_renorm'][inst][date][spec])):
-                wl   = spec_dic['spec_renorm'][inst][date][spec][i_ord]['wl']
+                wl   = spec_dic['spec_renorm'][inst][date][spec][i_ord]['wl']/fact_redshift
                 flux = spec_dic['spec_renorm'][inst][date][spec][i_ord]['flux']
 
                 if line is not None : x = (wl - line) / line * const_c_km
@@ -1597,7 +1665,7 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False,
         if date not in visits_emphasis: continue
         for spec in spec_dic['spec_renorm'][inst][date]:
             for i_ord in range(len(spec_dic['spec_renorm'][inst][date][spec])):
-                wl   = spec_dic['spec_renorm'][inst][date][spec][i_ord]['wl']
+                wl   = spec_dic['spec_renorm'][inst][date][spec][i_ord]['wl']/fact_redshift
                 flux = spec_dic['spec_renorm'][inst][date][spec][i_ord]['flux']
 
                 if line is not None : x = (wl - line) / line * const_c_km
@@ -1641,7 +1709,7 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False,
         valid_domains = spec_dic['reference'][inst][plot_reference]['valid_domains']
 
         x_ref = np.linspace(min_wl, max_wl, int((max_wl - min_wl)/ 0.01))
-        y_ref = spline(x_ref)
+        y_ref = spline(x_ref*fact_redshift)
 
         cond_plot = np.zeros_like(x_ref, dtype=bool)
         for domain in valid_domains:
@@ -1700,7 +1768,6 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False,
         line=dict(color='black', width=1),
         )]
     )
-
 
     fig.show()
 
@@ -2026,6 +2093,8 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
         )]
     )
     
+    add_line_ticks(fig, line=line, xlim=xlim)
+
     if line is not None : fig.update_layout(legend=dict(font=dict(size=16), x=0.01, y=0.01, xanchor='left',   yanchor='bottom', borderwidth=1, tracegroupgap=0))
     else                : fig.update_layout(legend=dict(font=dict(size=16), x=0.01, y=0.99, xanchor='left',   yanchor='top', borderwidth=1, tracegroupgap=0))
     fig.show()
