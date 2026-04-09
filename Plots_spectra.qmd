@@ -8,11 +8,19 @@ jupyter: python3
 ---
 
 
-# Analysis of exocomet spectra
+:::: {layout="[90,10]"}
 
+::: {#text-col}
 ### Théo Vrignaud — March 17, 2026
 
 ***
+:::
+
+::: {#gif-col style="display: flex; align-items: center; justify-content: center;"}
+![](giphy.gif)
+:::
+
+::::
 
 This notebook provides interactive visualisations of Beta Pictoris spectra obtained on **April 29** and **September 10, 2025**, with the Hubble Space Telescope (STIS and COS; program #17790) and the HARPS spectrograph at the 3.6m ESO telescope in La Silla, Chile (program 115.282N).
 
@@ -70,9 +78,11 @@ list_visits_COS  =  ['2014-02-22',  '2015-12-10',  '2016-01-30',  '2017-04-23',
 list_visits_HARPS = ['2024-04-17', '2024-08-08', '2025-04-29', '2025-09-03', '2025-09-10']
 
 # Attribute color to each spectrum
-colors = ['royalblue', 'firebrick', 'darkorange', 'seagreen', 'darkviolet', 'goldenrod', 'deeppink', 'teal', 'saddlebrown', 'mediumslateblue']
+colors = ['darkorange', 'seagreen', 'darkviolet', 'goldenrod', 'deeppink', 'teal', 'saddlebrown', 'royalblue', 'mediumslateblue', 'firebrick', 'darkcyan']
 date_to_color = {}
-for i, date in enumerate(sorted(set(list_visits_STIS) | set(list_visits_COS) | set(list_visits_HARPS))) : date_to_color[date] = colors[i%len(colors)]
+
+for i, date in enumerate(list_visits_STIS+list_visits_COS+list_visits_HARPS) : 
+    if date not in date_to_color : date_to_color[date] = colors[i%len(colors)]
 ```
 
 ### STIS

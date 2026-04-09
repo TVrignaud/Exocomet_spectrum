@@ -16,3 +16,6 @@ env_spectral_analysis/
 __pycache__/
 *.pyc
 *.pyo
+
+# Gif
+giphy.gif

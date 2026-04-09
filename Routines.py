@@ -1523,9 +1523,9 @@ def filter_nan(a, cond):
 def add_line_ticks(fig, line=None, xlim=None):
 
     # Récupère toutes les données x,y de toutes les traces
-    ref_trace = next(t for t in fig.data if t.name == 'Reference spectrum')
-    all_x = np.array(ref_trace.x)
-    all_y = np.array(ref_trace.y)
+    ref_traces = [t for t in fig.data if t.name in ['Reference spectrum', 'Photospheric Continuum']]
+    all_x = np.concatenate([np.array(t.x) for t in ref_traces])
+    all_y = np.concatenate([np.array(t.y) for t in ref_traces])
 
     for species in ['Fe II', 'Ni II', 'Si II', 'Mn II', 'Cr II', 'Ca II', 'S I', 'C I 3P 1/2', 'C I 3P 3/2', 'C I 3P 5/2', 'C I 1D 5/2'] :
         transitions = List_studied_lines.dic_all_lines[species]
@@ -1570,8 +1570,6 @@ def add_line_ticks(fig, line=None, xlim=None):
 
             tick_height = np.nanmean(local_y) * 0.06
 
-            # Ajoute le tick comme une annotation verticale
-
             fig.add_trace(go.Scatter(
                 x=[x_line, x_line],
                 y=[y_tick, y_tick + tick_height],
@@ -1579,7 +1577,7 @@ def add_line_ticks(fig, line=None, xlim=None):
                 line=dict(color="#9071CA", width=2.2),
                 name=species,
                 text=[f"{species}<br>λ = {wl_line:.3f} Å<br>E = {transition[2]:.0f} cm⁻¹<br>f = {transition[1]:.3f}",
-                      f"{species}<br>λ = {wl_line:.4f} Å<br>E = {transition[2]:.0f} cm⁻¹<br>f = {transition[1]:.3f}"],
+                      f"{species}<br>λ = {wl_line:.3f} Å<br>E = {transition[2]:.0f} cm⁻¹<br>f = {transition[1]:.3f}"],
                 hoverinfo='text',
                 showlegend=False,
             ))
@@ -1897,7 +1895,7 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                             # Gaseous components
                             for i_comp in range(n_comp) : 
                                 if date == '2025-04-29' : 
-                                    color_loc = {0 : 'dodgerblue', 1 : 'forestgreen', 2 : '#FF7F0E', 3 : 'black'}[i_comp]
+                                    color_loc = {0 : 'royalblue', 1 : 'seagreen', 2 : 'darkorange', 3 : 'black'}[i_comp]
                                     ls_loc = {0 : 'solid', 1 : 'solid', 2 : 'solid', 3 : '5px,3px'}[i_comp]
                                     name_loc = {0 : 'LVC 1', 1 : 'LVC 2', 2 : 'LVC 3', 3 : 'disc'}[i_comp]
                                 if date == '2025-09-10' : 
@@ -1955,13 +1953,13 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                                 x=filter_nan(x_ord_HR, cond),
                                 y=filter_nan(flux_model * func_continuum_plot(wl_ord_HR), cond),
                                 mode='lines',
-                                name='Exocomet model',
-                                legendgroup='Exocomet model',
-                                showlegend='Exocomet model' not in labels_in_legend,
+                                name='Full model',
+                                legendgroup='Full model',
+                                showlegend='Full model' not in labels_in_legend,
                                 line=dict(color='red', width=3, dash = 'solid'),
                             ))
                                 
-                                labels_in_legend.add('Exocomet model')
+                                labels_in_legend.add('Full model')
 
                                 min_x = min(min_x, np.nanmin(x_ord_HR))
                                 max_x = max(max_x, np.nanmax(x_ord_HR))
