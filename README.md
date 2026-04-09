@@ -1,7 +1,6 @@
 # Exocomet spectra — Beta Pictoris
 Interactive visualisation of exocomet absorption signatures detected in Beta Pictoris spectra obtained on April 29 and September 10, 2025.
 
-## Interactive notebook
 The rendered notebook is available at : https://tvrignaud.github.io/Exocomet_spectrum
 
 ## Repository structure
