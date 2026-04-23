@@ -344,6 +344,7 @@ def Retrieve_lines(Analysis_dic, settings) :
             
             # Retrieve the properties of the fitted lines
             #    + For each line of List_studied_lines.py (characterised by a wavelength and a lower energy level), we find the corresponding energy indexes (i,j) from the tabulated datasets.
+            #    + For some lines, the couple (i,j) is directly provided through dic_ij_specific, to avoid mistakes due to inaccurate tabulated wavelengths or energies.
             dic_ij_specific = {'Ca II' : {1838.01    : (1, 10),    1840.06   : (2, 11)},
                                'Cr II' : {2066.1638  : (0, 27),    2669.5023 : (2, 33),    2673.6222 : (4, 36),   2677.955  : (4, 35),
                                           2677.9538  : (5, 37),    2767.3539 : (5, 29),    2836.4656 : (5, 26),   2868.4894 : (1, 21),
@@ -360,7 +361,7 @@ def Retrieve_lines(Analysis_dic, settings) :
                 wl, f, E_cm, g_l, g_u = x[0], x[1], x[2], x[3], x[4]
                 count = 0
 
-                # Recover i,j directly from the species and wavelength 
+                # Recover i,j directly from dic_ij_specific 
                 if sp in dic_ij_specific and wl in dic_ij_specific[sp] :
                     i_line, j_line = dic_ij_specific[sp][wl]
                     count = 1
@@ -410,7 +411,7 @@ def Retrieve_lines(Analysis_dic, settings) :
 
 
 
-        # Case where only one level studied
+        # Case where only one level is studied
         if Analysis_dic['Data_species'][sp]['n_level_modeled'] == 1 : 
         
             dic_lines_fitted_sp = {}  
@@ -427,7 +428,7 @@ def Retrieve_lines(Analysis_dic, settings) :
             list_levels_saturated_sp = []   
 
 
-        # For fitted lines and saturated lines, we also retrieve the pixels from Analysis_dic['table_wl_HR'] which are close to the line, to accelerate the computation. 
+        # For fitted lines and saturated lines, we also retrieve the pixels from Analysis_dic['table_wl_HR'] which are close to the line, to accelerate the model computation. 
         for (i,j) in dic_lines_fitted_sp :
             wl = dic_lines_fitted_sp[(i,j)]['wl']
             table_wl_HR = Analysis_dic['table_wl_HR']
