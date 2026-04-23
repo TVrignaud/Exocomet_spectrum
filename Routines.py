@@ -1897,11 +1897,11 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                                 if date == '2025-04-29' : 
                                     color_loc = {0 : 'royalblue', 1 : 'seagreen', 2 : 'darkorange', 3 : 'black'}[i_comp]
                                     ls_loc = {0 : 'solid', 1 : 'solid', 2 : 'solid', 3 : '5px,3px'}[i_comp]
-                                    name_loc = {0 : 'LVC 1', 1 : 'LVC 2', 2 : 'LVC 3', 3 : 'disc'}[i_comp]
+                                    name_loc = {0 : 'comet 1', 1 : 'comet 2', 2 : 'comet 3', 3 : 'disc'}[i_comp]
                                 if date == '2025-09-10' : 
                                     color_loc = {0 : 'cyan', 1 : 'darkviolet', 2 : 'grey', 3 : 'black'}[i_comp]
                                     ls_loc = {0 : 'solid', 1 : 'solid', 2 : 'solid', 3 : '5px,3px'}[i_comp]
-                                    name_loc = {0 : 'LVC 5', 1 : 'LVC 4', 2 : 'Faint comet', 3 : 'disc'}[i_comp]
+                                    name_loc = {0 : 'comet 5', 1 : 'comet 4', 2 : 'Faint comet', 3 : 'disc'}[i_comp]
                                 color_loc = apply_alpha_on_white(color_loc, 0.5)
 
                                 flux_comp = copy.deepcopy(dic_flux_all_orders[inst][date][spec][i_ord]['Flux_comp_'+str(i_comp)+'_HR'])
