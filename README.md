@@ -15,6 +15,7 @@ The rendered notebook is available at : https://tvrignaud.github.io/Exocomet_spe
 The data files required to run this notebook are hosted on Zenodo : https://doi.org/10.5281/zenodo.19072081 : 
 - `Data_Beta_Pic.npy` : spectroscopic observations of Beta Pic obtained with the Hubble Space Telescope and the HARPS spectrograph
 - `Data_tabulated.zip` : tabulated spectroscopic data for S I, Ca II, Mn II, Fe II, Si II, Cr II, Ni II, and C I. Also includes a spectral model of Beta Pictoris, and tabulated line spread functions for the STIS and COS instruments.
+
 Download `Data_Beta_Pic.npy` and `Data_tabulated.zip` and place them in the root folder.
 
 ## Dependencies
