@@ -32,7 +32,7 @@ pi = np.pi
 
 const_lambda_0 = 2756.5507        # A
 const_h = 6.62607015e-34          # Js
-const_hbar = const_h/2/pi      # Js
+const_hbar = const_h/2/pi         # Js
 const_c = 299792458               # m/s
 const_c_km = 299792.458           # km/s
 const_eps_0 = 8.85418782*10**-12  # si
@@ -389,7 +389,8 @@ def Retrieve_lines(Analysis_dic, settings) :
                 # Retrieve the properties of all the lines of the current species
                 #    + 'dic_lines_all_sp' includes all optically allowed UV/optical transitions and parity-forbidden IR lines
                 #    + 'dic_lines_saturated_sp' stores lines which are susceptible to be saturated
-                #    + To estimate which lines are likely to be saturated, we use the criterion gf*wl/const_lambda_0*np.exp(-E_l/7000) > criterion_saturated[sp]
+                #    + To estimate which lines are likely to be saturated, we use the criterion gf*wl/const_lambda_0*np.exp(-E_l/7000) > criterion_saturated[sp] (see Vrignaud et al. 2024a,b)
+                #    + Lines from the ground state are generally assumed to be partly saturated
                 dic_lines_all_sp     = {}      
                 dic_lines_saturated_sp  = {}      
                 list_levels_saturated_sp = []                
@@ -507,7 +508,7 @@ def Retrieve_LSF(Analysis_dic, settings) :
 
     configs_STIS = {
 
-    'E230H_2400_0_01x0_03' : ['E230H_2400.txt', '0.1x0.03', 1.27],   # file, slit, rv size of one pixel
+    'E230H_2400_0_01x0_03' : ['E230H_2400.txt', '0.1x0.03', 1.27],   # file, slit, rv width of one pixel
     'E230H_2400_0_1x0_2'   : ['E230H_2400.txt', '0.1x0.2', 1.27],
     'E230H_2400_0_1x0_09'  : ['E230H_2400.txt', '0.1x0.09', 1.27],
     'E230H_2400_6x0_2'     : ['E230H_2400.txt', '6x0.2', 1.27],
