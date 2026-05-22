@@ -35,7 +35,7 @@ Download `Data_Beta_Pic.npy` and `Data_tabulated.zip`, unzip the latter, and pla
 - `bindensity` (Bourrier et al. 2025, A&A 691, A113; https://www.astro.unige.ch/~delisle/bindensity/doc/)
 
 ## Code use
-After cloning the GitHub repository and installing the dependencies -- which should take only a few minutes -- the code use is detailed in the notebook `Plots_spectra.ipynb`.
+After cloning the GitHub repository and installing the dependencies -- which should take only a few minutes -- the code can run using the notebook `Plots_spectra.ipynb`.
 
 ## References
 - Vrignaud & Lecavelier (2026, A&A, 707, A60; https://www.aanda.org/articles/aa/abs/2026/03/aa57819-25)
