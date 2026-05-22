@@ -1,5 +1,16 @@
 # Exocomet spectra - Beta Pictoris
-Interactive visualisation of exocomet absorption signatures detected in Beta Pictoris spectra obtained on April 29 and September 10, 2025.
+This code models the absorption signatures of transiting exocomet gas tails in atomic lines.
+
+## Overview
+
+The absorption spectrum of a comet is computed from a small set of physical parameters, such as the column densities of modelled species (e.g. Fe II, C I) and the comet's distance to the star. The excitation state of the gaseous tail is derived from radiative and collisional excitation, accounting for self-shielding of stellar photons. The resulting model can then be compared to observations to retrieve the physical and chemical properties of transiting exocomets detected in spectroscopy.
+
+An example application is provided in Plots_spectra.ipynb. The notebook lets you:
+ 
+- Explore spectroscopic observations of Beta Pictoris obtained with the Hubble Space Telescope on April 29 and September 10, 2025;
+- Visualise the detected exocomet signatures interactively;
+- Run the exocomet model;
+- Compare exocomet observations against the best-fit solution.
 
 The rendered notebook is available at : https://tvrignaud.github.io/Exocomet_spectrum
 
@@ -16,16 +27,16 @@ The data files required to run this notebook are hosted on Zenodo : https://doi.
 - `Data_Beta_Pic.npy` : spectroscopic observations of Beta Pic obtained with the Hubble Space Telescope and the HARPS spectrograph
 - `Data_tabulated.zip` : tabulated spectroscopic data for S I, Ca II, Mn II, Fe II, Si II, Cr II, Ni II, and C I. Also includes a spectral model of Beta Pictoris, and tabulated line spread functions for the STIS and COS instruments.
 
-Download `Data_Beta_Pic.npy` and `Data_tabulated.zip` and place them in the root folder.
+Download `Data_Beta_Pic.npy` and `Data_tabulated.zip`, unzip the latter, and place them in the root folder.
 
 ## Dependencies
-- Python 3.x
-- `numpy`, `scipy`, `plotly`, `astropy`, 
-- `bindensity` (Bourrier et al. 2025, A&A 691, A113)
+- Python 3.12.1
+- `numpy`, `scipy`, `pandas`, `astropy`, `matplotlib`, `plotly`, `ipykernel`
+- `bindensity` (Bourrier et al. 2025, A&A 691, A113; https://www.astro.unige.ch/~delisle/bindensity/doc/)
 
 ## References
-- Vrignaud & Lecavelier (2026, A&A, 707, A60)
-- Vrignaud et al. (in prep., 2026)
+- Vrignaud & Lecavelier (2026, A&A, 707, A60; https://www.aanda.org/articles/aa/abs/2026/03/aa57819-25)
+- Vrignaud et al. (in prep., 2026; https://www.researchsquare.com/article/rs-9515646/v1)
 
 ## Contact
 Théo Vrignaud — vrignaud@iap.fr
