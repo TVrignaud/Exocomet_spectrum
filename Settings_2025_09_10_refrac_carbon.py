@@ -189,6 +189,7 @@ dic_shift_stis['2025-09-10']['ofgs05060_x1d.fits'][17].append( ([2499.5,2500], 1
 dic_shift_stis['2025-09-10']['ofgs05060_x1d.fits'][6].append( ([2592,2592.8], 0.5) )       # 2592 Fe II
 dic_shift_stis['2025-09-10']['ofgs05060_x1d.fits'][3].append( ([2621,2622], 1) )           # 2621 Fe II
 
+dic_shift_stis['2025-09-10']['ofgs05040_x1d.fits'][19].append( ([1807.6,1808.5], 1) )    # 1808 Si II
 
 
 dic_shift_cos = {'2025-09-10' : {}}
