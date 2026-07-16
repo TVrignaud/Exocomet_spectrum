@@ -378,7 +378,7 @@ Analysis_dic_2025_04_29 = Routines.Prepare_analysis(Settings.settings)
 
 dic_params_all_components = {
 
-    # First component: exocomet at -7 km/s (LVC 1)
+    # First component: exocomet at -7 km/s (comet #1)
     0: {'d': 0.892,              # Transit distance (in AU, relative to Beta Pic)
         'Delta_d': 0.0,          # Width of the cloud, in AU (in AU, here set to 0)
         'f_esc': 0.175,          # Ratio between the transverse and radial column density of the cloud (between 0 and 1)
@@ -405,7 +405,7 @@ dic_params_all_components = {
                 '13C I 3P 5/2': 0.158, 
                 '13C I 1D 5/2': 0.0171}}, 
 
-    # Second component: exocomet at +2 km/s (LVC 2)
+    # Second component: exocomet at +2 km/s (comet #2)
     1: {'d': 4.756, 
         'Delta_d': 0.0, 
         'f_esc': 0.0959, 
@@ -432,7 +432,7 @@ dic_params_all_components = {
               '13C I 3P 5/2': 0.07, 
               '13C I 1D 5/2': 0.0068}}, 
 
-    # Third component: exocomet at +10 km/s (LVC 3)
+    # Third component: exocomet at +10 km/s (comet #3)
     2: {'d': 1.72, 
         'Delta_d': 0.0, 
         'f_esc': 0.0516, 
@@ -572,7 +572,7 @@ Analysis_dic_2025_09_10 = Routines.Prepare_analysis(Settings.settings)
 
 dic_params_all_components = {
 
-    # First component: exocomet at +4 km/s (LVC 4)
+    # First component: exocomet at +4 km/s (comet #4)
     0: {'d': 0.54, 
         'Delta_d': 0.0, 
         'f_esc': 0.182, 
@@ -599,7 +599,7 @@ dic_params_all_components = {
               '13C I 3P 5/2': 0.44, 
               '13C I 1D 5/2': 0.0597}}, 
               
-    # Second component: exocomet at +13 km/s (LVC 5)
+    # Second component: exocomet at +13 km/s (comet #5)
     1: {'d': 3.82, 
         'Delta_d': 0.0, 
         'f_esc': 0.301, 
@@ -626,7 +626,7 @@ dic_params_all_components = {
               '13C I 3P 5/2': 0.284, 
               '13C I 1D 5/2': 0.00274}}, 
 
-    # Third component: small gas cloud at -1 km/s. Not studied in the paper, but adding this component improves a lot the fit in Fe II lines
+    # Third component: small gas cloud at -2 km/s. Not studied in the paper, but adding this component improves a lot the fit in strong Fe II lines, particularly those arisinf from low-excitation levels. 
     2: {'d': 7.641, 
         'Delta_d': 0.0,
           'f_esc': 0.0, 
@@ -684,9 +684,9 @@ dic_params_all_components = {
 
 
 meta_params = {0: {'n_pix': 19, 'sp_ref': 'Fe II', 'd_N_bin': 0.3, 'include_collisions': 'all', 'geometry': 'cylind'}, 
-                   1: {'n_pix': 7, 'sp_ref': 'Fe II', 'd_N_bin': 0.3, 'include_collisions': 'all', 'geometry': 'cylind'}, 
-                   2: {'n_pix': 1, 'sp_ref': 'Fe II', 'd_N_bin': 10, 'include_collisions': 'all', 'geometry': 'cylind'}, 
-                   3: {'n_pix': 1, 'sp_ref': 'Fe II', 'd_N_bin': 0.3, 'include_collisions': 'all', 'geometry': 'slab'}, 'comet': {'n_params_comet': 0}}
+               1: {'n_pix': 7, 'sp_ref': 'Fe II', 'd_N_bin': 0.3, 'include_collisions': 'all', 'geometry': 'cylind'}, 
+               2: {'n_pix': 1, 'sp_ref': 'Fe II', 'd_N_bin': 10, 'include_collisions': 'all', 'geometry': 'cylind'}, 
+               3: {'n_pix': 1, 'sp_ref': 'Fe II', 'd_N_bin': 0.3, 'include_collisions': 'all', 'geometry': 'slab'}, 'comet': {'n_params_comet': 0}}
 
 
 n_comp = 4

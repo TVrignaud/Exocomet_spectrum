@@ -1572,15 +1572,33 @@ def add_line_ticks(fig, line=None, xlim=None):
 
             tick_height = np.nanmean(local_y) * 0.06
 
+            # Le tick (sans hover)
             fig.add_trace(go.Scatter(
                 x=[x_line, x_line],
                 y=[y_tick, y_tick + tick_height],
-                mode='lines',
+                mode="lines",
                 line=dict(color="#9071CA", width=2.2),
-                name=species,
-                text=[f"{species}<br>λ = {wl_line:.3f} Å<br>E = {transition[2]:.0f} cm⁻¹<br>f = {transition[1]:.3f}",
-                      f"{species}<br>λ = {wl_line:.3f} Å<br>E = {transition[2]:.0f} cm⁻¹<br>f = {transition[1]:.3f}"],
-                hoverinfo='text',
+                hoverinfo="skip",
+                showlegend=False,
+            ))
+
+            # Point invisible au milieu (avec hover)
+            fig.add_trace(go.Scatter(
+                x=[x_line],
+                y=[y_tick + tick_height/2],
+                mode="markers",
+                marker=dict(size=12, color="rgba(0,0,0,0)"),
+                hovertemplate=(
+                    f"{species}<br>"
+                    f"λ = {wl_line:.3f} Å<br>"
+                    f"E = {transition[2]:.0f} cm⁻¹<br>"
+                    f"f = {transition[1]:.3f}"
+                    "<extra></extra>"
+                ),
+                hoverlabel=dict(
+                    bgcolor="#DFACF3",
+                    font_color="black",
+                ),
                 showlegend=False,
             ))
 
@@ -1650,6 +1668,7 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False,
                         showlegend=False,
                         line=dict(color=color, width=1.2),
                         error_y=error_y,
+                        hovertemplate="%{fullData.name}<extra></extra>",
                     ))
 
                     min_wl = min(min_wl, np.nanmin(wl[cond_plot]))
@@ -1692,6 +1711,7 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False,
                         showlegend=date not in dates_in_legend,
                         line=dict(color=color, width=3),
                         error_y=error_y,
+                        hovertemplate="%{fullData.name}<extra></extra>",
                     ))
 
                     dates_in_legend.add(date)
@@ -1724,6 +1744,7 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False,
             mode='lines',
             name=plot_reference,
             line=dict(color='black', width=4),
+            hovertemplate="%{fullData.name}<extra></extra>",
         ))
 
 
@@ -1840,6 +1861,7 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                             legendgroup=date,
                             showlegend=date not in labels_in_legend,
                             line=dict(color='dimgrey', width=3, dash = 'solid'),
+                            hovertemplate="%{fullData.name}<extra></extra>",
                         ))
 
 
@@ -1886,7 +1908,8 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                                     mode='lines',
                                     name = 'ISM',
                                     showlegend=False,
-                                    line=dict(color='grey', width=2.5, dash = 'dashdot'),
+                                    line=dict(color='dimgrey', width=2.5, dash = 'dashdot'),
+                                    hovertemplate="%{fullData.name}<extra></extra>",
                                 ))
 
                                 min_x = min(min_x, np.nanmin(x_ord_HR))
@@ -1916,6 +1939,7 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                                     name = name_loc,
                                     showlegend=False,
                                     line=dict(color=color_loc, width=2.5, dash = ls_loc),
+                                    hovertemplate="%{fullData.name}<extra></extra>",
                                     ))
 
 
@@ -1959,6 +1983,7 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                                 legendgroup='Full model',
                                 showlegend='Full model' not in labels_in_legend,
                                 line=dict(color='red', width=3, dash = 'solid'),
+                                hovertemplate="%{fullData.name}<extra></extra>",
                             ))
                                 
                                 labels_in_legend.add('Full model')
@@ -2006,6 +2031,7 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                                 legendgroup='Exocomet model - rebined',
                                 showlegend='Exocomet model - rebined' not in labels_in_legend,
                                 line=dict(color='indigo', width=3, dash = 'solid'),
+                                hovertemplate="%{fullData.name}<extra></extra>",
                                 ))
 
                                 labels_in_legend.add('Exocomet model - rebined')
@@ -2045,6 +2071,7 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
             legendgroup='Reference spectrum',
             showlegend='Reference spectrum' not in labels_in_legend,
             line=dict(color='black', width=3, dash = 'solid'),
+            hovertemplate="%{fullData.name}<extra></extra>",
         ))
 
         labels_in_legend.add('Reference spectrum')
