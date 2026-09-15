@@ -1795,6 +1795,15 @@ def plot_observed_spectrum(spec_dic, inst, visits_plots, plot_error_bar = False,
     return None  
 
 
+Okabe_ito = ['#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#CC79A7', '#000000']
+
+color_comet_1 = Okabe_ito[1]
+color_comet_2 = Okabe_ito[6]
+color_comet_3 = Okabe_ito[2]
+color_comet_4 = Okabe_ito[0]
+color_comet_5 = Okabe_ito[4]
+
+color_model = Okabe_ito[5]
 
 
 # Function to plot the modelled spectrum and compare it to observations
@@ -1920,14 +1929,14 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                             # Gaseous components
                             for i_comp in range(n_comp) : 
                                 if date == '2025-04-29' : 
-                                    color_loc = {0 : 'royalblue', 1 : 'seagreen', 2 : 'darkorange', 3 : 'black'}[i_comp]
+                                    color_loc = {0 : color_comet_1, 1 : color_comet_2, 2 : color_comet_3, 3 : 'grey'}[i_comp]
                                     ls_loc = {0 : 'solid', 1 : 'solid', 2 : 'solid', 3 : '5px,3px'}[i_comp]
                                     name_loc = {0 : 'comet 1', 1 : 'comet 2', 2 : 'comet 3', 3 : 'disc'}[i_comp]
                                 if date == '2025-09-10' : 
-                                    color_loc = {0 : 'cyan', 1 : 'darkviolet', 2 : 'grey', 3 : 'black'}[i_comp]
-                                    ls_loc = {0 : 'solid', 1 : 'solid', 2 : 'solid', 3 : '5px,3px'}[i_comp]
+                                    color_loc = {0 : color_comet_5, 1 : color_comet_4, 2 : 'grey', 3 : 'grey'}[i_comp]
+                                    ls_loc = {0 : 'solid', 1 : 'solid', 2 : '2px,2px', 3 : '5px,3px'}[i_comp]
                                     name_loc = {0 : 'comet 5', 1 : 'comet 4', 2 : 'Shallow comet', 3 : 'disc'}[i_comp]
-                                color_loc = apply_alpha_on_white(color_loc, 0.5)
+                                # color_loc = apply_alpha_on_white(color_loc, 0.5)
 
                                 flux_comp = copy.deepcopy(dic_flux_all_orders[inst][date][spec][i_ord]['Flux_comp_'+str(i_comp)+'_HR'])
                                 cond = (flux_comp < 0.999) 
@@ -1982,7 +1991,7 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                                 name='Full model',
                                 legendgroup='Full model',
                                 showlegend='Full model' not in labels_in_legend,
-                                line=dict(color='red', width=3, dash = 'solid'),
+                                line=dict(color=color_model, width=3, dash = 'solid'),
                                 hovertemplate="%{fullData.name}<extra></extra>",
                             ))
                                 
@@ -2030,7 +2039,7 @@ def plot_exocomet_model(Analysis_dic, dic_flux_all_orders, n_comp, plot_model_HR
                                 name='Exocomet model - rebined',
                                 legendgroup='Exocomet model - rebined',
                                 showlegend='Exocomet model - rebined' not in labels_in_legend,
-                                line=dict(color='indigo', width=3, dash = 'solid'),
+                                line=dict(color=color_model, width=3, dash = 'solid'),
                                 hovertemplate="%{fullData.name}<extra></extra>",
                                 ))
 
